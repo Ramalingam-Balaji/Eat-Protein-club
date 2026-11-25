@@ -22,6 +22,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ScrollManager from "./components/ScrollManager";
 //import ScrollToTop from "./components/ScrollToTop";
+import WhatsAppSupport from "./components/WhatsAppSupport";
 
 export default function AppRoutes() {
   return (
@@ -68,6 +69,7 @@ export default function AppRoutes() {
       </main>
 
       <Footer />
+      <WhatsAppSupport />
     </div>
   );
 }
