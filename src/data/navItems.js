@@ -12,8 +12,8 @@ export const navItems = [
 // },
   {
     label: "Protein Calculator",
-    id: "protein-calculator",
-    type: "section",
+    path: "/protein-calculator",
+    type: "route",
   },
   {
     label: "Protein Foods",

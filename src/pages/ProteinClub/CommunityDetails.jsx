@@ -709,12 +709,13 @@ function TopContributors() {
         ))}
       </div>
 
-      <button
-        onClick={() => alert("Leaderboard page will open here.")}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-green-700 py-2.5 text-sm font-bold text-green-800 hover:bg-green-50"
-      >
-        View Leaderboard <ArrowRight size={16} />
-      </button>
+      <Link
+  to="/protein-club/leaderboard-rewards"
+  className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-green-700 py-2.5 text-sm font-bold text-green-800 transition hover:bg-green-50 hover:shadow-sm"
+>
+  View Leaderboard
+  <ArrowRight size={16} />
+</Link>
     </Panel>
   );
 }

@@ -888,13 +888,14 @@ export default function ExploreCommunities() {
               <p className="mt-2 text-xs leading-5 text-gray-600">
                 Tell us what kind of protein community you’d like to see.
               </p>
-              <button
-                onClick={() => setSuggestOpen(true)}
-                className="mt-3 inline-flex items-center gap-2 rounded-full border border-green-700 bg-white px-5 py-2.5 text-sm font-bold text-green-800 shadow-sm hover:bg-green-50"
-              >
-                <Lightbulb size={16} />
-                Suggest a Community <ArrowRight size={15} />
-              </button>
+              <Link
+  to="/protein-club/suggest-community"
+  className="mt-3 inline-flex items-center gap-2 rounded-full border border-green-700 bg-white px-5 py-2.5 text-sm font-bold text-green-800 shadow-sm transition hover:-translate-y-0.5 hover:bg-green-50 hover:shadow-md"
+>
+  <Lightbulb size={16} />
+  Suggest a Community
+  <ArrowRight size={15} />
+</Link>
             </div>
 
             <ClipboardList size={70} className="hidden shrink-0 text-green-600 sm:block" />

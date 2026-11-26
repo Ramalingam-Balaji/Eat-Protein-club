@@ -1388,3 +1388,846 @@ export default function BMISection({ showToast }) {
     </section>
   );
 }
+
+
+// import React, { useState } from "react";
+// import {
+//   UserRound,
+//   Users,
+//   Baby,
+//   Heart,
+//   Dumbbell,
+//   Calculator,
+//   Target,
+//   ChartNoAxesColumnIncreasing,
+//   HeartPulse,
+//   ArrowRight,
+//   Plus,
+//   RefreshCw,
+//   CheckCircle2,
+//   Info,
+// } from "lucide-react";
+
+// const profileOptions = [
+//   { label: "Adult", icon: UserRound, factor: 0.8 },
+//   { label: "Kid", icon: Baby, factor: 2 },
+//   { label: "Pregnant Woman", icon: Heart, factor: 1.5 },
+//   { label: "Feeding Mother", icon: Users, factor: 1.5 },
+//   { label: "Bodybuilder", icon: Dumbbell, factor: 1.6 },
+// ];
+
+// const goalOptions = [
+//   {
+//     id: "maintain",
+//     label: "Maintain",
+//     description: "Stay healthy",
+//     icon: HeartPulse,
+//   },
+//   {
+//     id: "lose",
+//     label: "Lose Fat",
+//     description: "Reduce weight",
+//     icon: Target,
+//   },
+//   {
+//     id: "muscle",
+//     label: "Build Muscle",
+//     description: "Gain strength",
+//     icon: Dumbbell,
+//   },
+// ];
+
+// const activityOptions = [
+//   { id: "sedentary", label: "Sedentary", description: "Little or no exercise" },
+//   { id: "light", label: "Light Active", description: "1–3 days/week" },
+//   { id: "moderate", label: "Moderately Active", description: "3–5 days/week" },
+//   { id: "very", label: "Very Active", description: "6–7 days/week" },
+// ];
+
+// const initialFamily = [
+//   {
+//     name: "Sri Lakshmi",
+//     protein: 75,
+//     goal: "Hormonal Health",
+//     avatar: "https://i.pravatar.cc/100?img=47",
+//   },
+//   {
+//     name: "Marhavin",
+//     protein: 44,
+//     goal: "Growth & Immunity",
+//     avatar: "https://i.pravatar.cc/100?img=11",
+//   },
+// ];
+
+// function bmiLabel(bmi) {
+//   if (!bmi || !Number.isFinite(bmi)) return "--";
+//   if (bmi < 18.5) return "Underweight";
+//   if (bmi < 25) return "Normal";
+//   if (bmi < 30) return "Overweight";
+//   return "Obesity";
+// }
+
+// function bmiColor(bmi) {
+//   if (!bmi || !Number.isFinite(bmi)) return "bg-gray-100 text-gray-500";
+//   if (bmi < 18.5) return "bg-blue-100 text-blue-700";
+//   if (bmi < 25) return "bg-green-100 text-green-700";
+//   if (bmi < 30) return "bg-orange-100 text-orange-700";
+//   return "bg-red-100 text-red-700";
+// }
+
+// function getHealthyWeightRange(heightCm) {
+//   if (!heightCm || heightCm <= 0) return null;
+
+//   const heightM = heightCm / 100;
+//   const minWeight = 18.5 * heightM * heightM;
+//   const maxWeight = 24.9 * heightM * heightM;
+
+//   return `${minWeight.toFixed(0)} – ${maxWeight.toFixed(0)}`;
+// }
+
+// export default function ProteinCalculator() {
+//   const [profile, setProfile] = useState("Adult");
+//   const [gender, setGender] = useState("Male");
+//   const [age, setAge] = useState("25");
+
+//   const [height, setHeight] = useState("170");
+//   const [heightUnit, setHeightUnit] = useState("cm");
+
+//   const [weight, setWeight] = useState("70");
+//   const [weightUnit, setWeightUnit] = useState("kg");
+
+//   const [goal, setGoal] = useState("muscle");
+//   const [activity, setActivity] = useState("moderate");
+
+//   const [calculated, setCalculated] = useState(false);
+//   const [family, setFamily] = useState(initialFamily);
+
+//   const [newMemberOpen, setNewMemberOpen] = useState(false);
+//   const [memberName, setMemberName] = useState("");
+//   const [memberWeight, setMemberWeight] = useState("");
+
+//   // Convert height into centimeters.
+//   const heightCm =
+//     heightUnit === "cm"
+//       ? Number(height)
+//       : Number(height) * 30.48;
+
+//   // Convert weight into kilograms.
+//   const weightKg =
+//     weightUnit === "kg"
+//       ? Number(weight)
+//       : Number(weight) * 0.45359237;
+
+//   // BMI calculation.
+//   const bmi =
+//     heightCm > 0 && weightKg > 0
+//       ? weightKg / Math.pow(heightCm / 100, 2)
+//       : 0;
+
+//   const validInputs =
+//     Number(age) >= 1 &&
+//     Number(age) <= 120 &&
+//     heightCm >= 50 &&
+//     heightCm <= 250 &&
+//     weightKg >= 10 &&
+//     weightKg <= 300;
+
+//   const selectedProfile = profileOptions.find(
+//     (item) => item.label === profile
+//   );
+
+//   // Goal/activity adjustments for Adult profile.
+//   const goalFactor = {
+//     maintain: 1,
+//     lose: 1.2,
+//     muscle: 1.6,
+//   };
+
+//   const activityFactor = {
+//     sedentary: 0.8,
+//     light: 1,
+//     moderate: 1.2,
+//     very: 1.4,
+//   };
+
+//   const proteinFactor =
+//     profile === "Adult"
+//       ? goalFactor[goal] * activityFactor[activity]
+//       : selectedProfile?.factor || 0.8;
+
+//   const proteinNeed = validInputs
+//     ? Math.round(weightKg * proteinFactor)
+//     : 0;
+
+//   const healthyWeightRange = getHealthyWeightRange(heightCm);
+
+//   const handleProfileChange = (newProfile) => {
+//     setProfile(newProfile);
+//     setCalculated(false);
+
+//     // Reset goal when changing profile.
+//     if (newProfile !== "Adult") {
+//       setGoal("maintain");
+//     }
+//   };
+
+//   const handleCalculate = () => {
+//     if (!validInputs) {
+//       alert(
+//         "Please enter valid age, height and weight before calculating."
+//       );
+//       return;
+//     }
+
+//     setCalculated(true);
+//   };
+
+//   const handleReset = () => {
+//     setProfile("Adult");
+//     setGender("Male");
+//     setAge("25");
+//     setHeight("170");
+//     setHeightUnit("cm");
+//     setWeight("70");
+//     setWeightUnit("kg");
+//     setGoal("muscle");
+//     setActivity("moderate");
+//     setCalculated(false);
+//   };
+
+//   const handleAddMember = () => {
+//     const name = memberName.trim();
+//     const kg =
+//       weightUnit === "kg"
+//         ? Number(memberWeight)
+//         : Number(memberWeight) * 0.45359237;
+
+//     if (!name || !kg || kg <= 0) {
+//       alert("Enter a family member name and valid weight.");
+//       return;
+//     }
+
+//     const newMember = {
+//       name,
+//       protein: Math.round(kg * 0.8),
+//       goal: "Daily Protein",
+//       avatar: `https://i.pravatar.cc/100?img=${family.length + 20}`,
+//     };
+
+//     setFamily((prev) => [...prev, newMember]);
+//     setMemberName("");
+//     setMemberWeight("");
+//     setNewMemberOpen(false);
+//   };
+
+//   return (
+//     <section
+//       id="protein-calculator"
+//       className="scroll-mt-24 bg-white px-3 py-5 sm:px-5 lg:px-6"
+//     >
+//       <div className="mx-auto max-w-[1440px]">
+//         <div className="grid grid-cols-1 gap-4 rounded-[28px] bg-[#F0F8EF] p-3 sm:p-5 lg:grid-cols-[0.95fr_1.6fr_0.65fr] lg:gap-5 lg:p-6">
+//           {/* =================================================
+//               LEFT: INTRODUCTION
+//           ================================================= */}
+//           <div className="flex flex-col justify-center px-1 py-2 sm:px-3">
+//             <span className="mb-2 w-fit rounded-md bg-green-100 px-2 py-1 text-[10px] font-extrabold uppercase tracking-wide text-green-800">
+//               Protein Calculator
+//             </span>
+
+//             <h2 className="text-2xl font-black leading-tight tracking-tight text-[#103B27] sm:text-3xl xl:text-4xl">
+//               Know Your Protein Need in 60 Seconds
+//             </h2>
+
+//             <p className="mt-3 text-sm leading-relaxed text-gray-700">
+//               Get your personalized daily protein requirement based on your age,
+//               gender, weight, activity level and goal.
+//             </p>
+
+//             {/* Benefits */}
+//             <div className="mt-5 grid grid-cols-2 gap-3 sm:mt-6">
+//               {[
+//                 { icon: Target, text: "Understand Your Body" },
+//                 { icon: Calculator, text: "Know Your Requirement" },
+//                 { icon: ChartNoAxesColumnIncreasing, text: "Get Your BMI" },
+//                 { icon: Heart, text: "Make Better Food Choices" },
+//               ].map((item) => {
+//                 const Icon = item.icon;
+//                 return (
+//                   <div key={item.text} className="flex flex-col items-center text-center">
+//                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm">
+//                       <Icon size={20} className="text-green-700" />
+//                     </div>
+//                     <p className="mt-1.5 max-w-[110px] text-xs font-semibold leading-tight text-[#103B27]">
+//                       {item.text}
+//                     </p>
+//                   </div>
+//                 );
+//               })}
+//             </div>
+
+//             {/* Mini information */}
+//             <div className="mt-5 flex items-start gap-2 rounded-2xl border border-green-100 bg-white/80 p-3">
+//               <Info size={17} className="mt-0.5 shrink-0 text-green-700" />
+//               <p className="text-xs leading-relaxed text-gray-600">
+//                 Your protein requirement is estimated according to the profile and
+//                 body weight you enter.
+//               </p>
+//             </div>
+//           </div>
+
+//           {/* =================================================
+//               CENTER: CALCULATOR CARD
+//           ================================================= */}
+//           <div className="min-w-0 rounded-2xl border border-green-100 bg-white p-3 shadow-md sm:p-4">
+//             {/* Profiles */}
+//             <div className="grid grid-cols-5 gap-1.5">
+//               {profileOptions.map((item) => {
+//                 const Icon = item.icon;
+//                 const isActive = profile === item.label;
+
+//                 return (
+//                   <button
+//                     key={item.label}
+//                     type="button"
+//                     onClick={() => handleProfileChange(item.label)}
+//                     className={`flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 transition ${
+//                       isActive
+//                         ? "bg-gradient-to-br from-green-600 to-green-800 text-white shadow-md"
+//                         : "bg-white text-gray-700 hover:bg-green-50"
+//                     }`}
+//                   >
+//                     <Icon size={19} />
+//                     <span className="text-center text-[10px] font-bold leading-tight sm:text-xs">
+//                       {item.label}
+//                     </span>
+//                   </button>
+//                 );
+//               })}
+//             </div>
+
+//             {/* Age & Gender */}
+//             <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+//               <div>
+//                 <label className="mb-1 block text-xs font-bold text-gray-700">
+//                   Age (Years)
+//                 </label>
+
+//                 <div className="flex items-center rounded-xl border border-gray-200 bg-gray-50 px-3">
+//                   <button
+//                     type="button"
+//                     onClick={() => {
+//                       setAge(String(Math.max(1, Number(age || 1) - 1)));
+//                       setCalculated(false);
+//                     }}
+//                     className="px-1 py-2 text-gray-500 hover:text-green-700"
+//                   >
+//                     −
+//                   </button>
+
+//                   <input
+//                     type="number"
+//                     min="1"
+//                     max="120"
+//                     value={age}
+//                     onChange={(e) => {
+//                       setAge(e.target.value);
+//                       setCalculated(false);
+//                     }}
+//                     className="w-full bg-transparent py-2 text-center text-sm font-semibold text-gray-800 outline-none"
+//                   />
+
+//                   <button
+//                     type="button"
+//                     onClick={() => {
+//                       setAge(String(Math.min(120, Number(age || 0) + 1)));
+//                       setCalculated(false);
+//                     }}
+//                     className="px-1 py-2 text-gray-500 hover:text-green-700"
+//                   >
+//                     +
+//                   </button>
+//                 </div>
+//               </div>
+
+//               <div>
+//                 <label className="mb-1 block text-xs font-bold text-gray-700">
+//                   Gender
+//                 </label>
+
+//                 <div className="grid grid-cols-2 gap-1 rounded-xl bg-gray-100 p-1">
+//                   {["Male", "Female"].map((item) => (
+//                     <button
+//                       key={item}
+//                       type="button"
+//                       onClick={() => {
+//                         setGender(item);
+//                         setCalculated(false);
+//                       }}
+//                       className={`rounded-lg py-2 text-xs font-bold transition ${
+//                         gender === item
+//                           ? "bg-green-700 text-white shadow"
+//                           : "text-gray-600 hover:bg-white"
+//                       }`}
+//                     >
+//                       {item}
+//                     </button>
+//                   ))}
+//                 </div>
+//               </div>
+//             </div>
+
+//             {/* Height / Weight / BMI */}
+//             <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+//               {/* Height */}
+//               <div>
+//                 <label className="mb-1 block text-xs font-bold text-gray-700">
+//                   Height
+//                 </label>
+
+//                 <div className="flex items-center rounded-xl border border-gray-200 bg-gray-50">
+//                   <input
+//                     type="number"
+//                     value={height}
+//                     onChange={(e) => {
+//                       setHeight(e.target.value);
+//                       setCalculated(false);
+//                     }}
+//                     className="min-w-0 w-full bg-transparent px-2 py-2.5 text-sm font-semibold outline-none"
+//                   />
+
+//                   <select
+//                     value={heightUnit}
+//                     onChange={(e) => {
+//                       const newUnit = e.target.value;
+
+//                       if (newUnit !== heightUnit) {
+//                         setHeight(
+//                           newUnit === "cm"
+//                             ? String((Number(height) * 30.48).toFixed(0))
+//                             : String((Number(height) / 30.48).toFixed(1))
+//                         );
+//                         setHeightUnit(newUnit);
+//                         setCalculated(false);
+//                       }
+//                     }}
+//                     className="bg-transparent pr-2 text-xs font-semibold text-gray-600 outline-none"
+//                   >
+//                     <option value="cm">cm</option>
+//                     <option value="ft">ft</option>
+//                   </select>
+//                 </div>
+//               </div>
+
+//               {/* Weight */}
+//               <div>
+//                 <label className="mb-1 block text-xs font-bold text-gray-700">
+//                   Weight
+//                 </label>
+
+//                 <div className="flex items-center rounded-xl border border-gray-200 bg-gray-50">
+//                   <input
+//                     type="number"
+//                     value={weight}
+//                     onChange={(e) => {
+//                       setWeight(e.target.value);
+//                       setCalculated(false);
+//                     }}
+//                     className="min-w-0 w-full bg-transparent px-2 py-2.5 text-sm font-semibold outline-none"
+//                   />
+
+//                   <select
+//                     value={weightUnit}
+//                     onChange={(e) => {
+//                       const newUnit = e.target.value;
+
+//                       if (newUnit !== weightUnit) {
+//                         setWeight(
+//                           newUnit === "kg"
+//                             ? String((Number(weight) * 0.45359237).toFixed(1))
+//                             : String((Number(weight) / 0.45359237).toFixed(1))
+//                         );
+//                         setWeightUnit(newUnit);
+//                         setCalculated(false);
+//                       }
+//                     }}
+//                     className="bg-transparent pr-2 text-xs font-semibold text-gray-600 outline-none"
+//                   >
+//                     <option value="kg">kg</option>
+//                     <option value="lb">lb</option>
+//                   </select>
+//                 </div>
+//               </div>
+
+//               {/* BMI */}
+//               <div>
+//                 <label className="mb-1 block text-xs font-bold text-gray-700">
+//                   Your BMI
+//                 </label>
+
+//                 <div className="flex h-[42px] items-center justify-between gap-1 rounded-xl border border-gray-200 bg-gray-50 px-2">
+//                   <span className="text-sm font-extrabold text-[#103B27]">
+//                     {bmi > 0 ? bmi.toFixed(1) : "--"}
+//                   </span>
+
+//                   <span
+//                     className={`rounded-full px-2 py-1 text-[9px] font-bold ${bmiColor(bmi)}`}
+//                   >
+//                     {bmi > 0 ? bmiLabel(bmi) : "--"}
+//                   </span>
+//                 </div>
+//               </div>
+//             </div>
+
+//             {/* Goals (Adult only) */}
+//             {profile === "Adult" && (
+//               <div className="mt-4">
+//                 <label className="mb-2 block text-xs font-extrabold text-gray-700">
+//                   Your Goal
+//                 </label>
+
+//                 <div className="grid grid-cols-3 gap-2">
+//                   {goalOptions.map((item) => {
+//                     const Icon = item.icon;
+//                     const isActive = goal === item.id;
+
+//                     return (
+//                       <button
+//                         key={item.id}
+//                         type="button"
+//                         onClick={() => {
+//                           setGoal(item.id);
+//                           setCalculated(false);
+//                         }}
+//                         className={`relative flex flex-col items-center rounded-xl border p-2 text-center transition ${
+//                           isActive
+//                             ? "border-green-500 bg-green-50 text-green-800 shadow-sm"
+//                             : "border-gray-200 bg-white text-gray-600 hover:border-green-300"
+//                         }`}
+//                       >
+//                         {isActive && (
+//                           <CheckCircle2
+//                             size={15}
+//                             className="absolute right-1 top-1 text-green-600"
+//                           />
+//                         )}
+
+//                         <Icon
+//                           size={23}
+//                           className={`mb-1 ${
+//                             item.id === "lose"
+//                               ? "text-orange-500"
+//                               : "text-green-700"
+//                           }`}
+//                         />
+
+//                         <span className="text-xs font-extrabold">
+//                           {item.label}
+//                         </span>
+
+//                         <span className="mt-0.5 text-[10px] leading-tight">
+//                           {item.description}
+//                         </span>
+//                       </button>
+//                     );
+//                   })}
+//                 </div>
+//               </div>
+//             )}
+
+//             {/* Activity */}
+//             {profile === "Adult" && (
+//               <div className="mt-4">
+//                 <label className="mb-2 block text-xs font-extrabold text-gray-700">
+//                   Activity Level
+//                 </label>
+
+//                 <div className="grid grid-cols-1 gap-1.5">
+//                   {activityOptions.map((item) => (
+//                     <button
+//                       key={item.id}
+//                       type="button"
+//                       onClick={() => {
+//                         setActivity(item.id);
+//                         setCalculated(false);
+//                       }}
+//                       className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-left transition ${
+//                         activity === item.id
+//                           ? "border-green-500 bg-green-50"
+//                           : "border-gray-200 bg-white hover:bg-green-50/60"
+//                       }`}
+//                     >
+//                       <span
+//                         className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
+//                           activity === item.id
+//                             ? "border-green-700"
+//                             : "border-gray-400"
+//                         }`}
+//                       >
+//                         {activity === item.id && (
+//                           <span className="h-2 w-2 rounded-full bg-green-700" />
+//                         )}
+//                       </span>
+
+//                       <span className="min-w-0">
+//                         <span className="block text-xs font-bold text-gray-800">
+//                           {item.label}
+//                         </span>
+//                         <span className="block text-[10px] text-gray-500">
+//                           {item.description}
+//                         </span>
+//                       </span>
+//                     </button>
+//                   ))}
+//                 </div>
+//               </div>
+//             )}
+
+//             {/* Calculate Button */}
+//             <button
+//               type="button"
+//               onClick={handleCalculate}
+//               className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-green-700 to-green-600 px-4 py-3 text-sm font-extrabold text-white shadow-md transition hover:-translate-y-0.5 hover:from-green-800 hover:to-green-700 hover:shadow-lg"
+//             >
+//               <Calculator size={17} />
+//               Calculate My Protein Need
+//               <ArrowRight size={16} />
+//             </button>
+
+//             {/* Results */}
+//             {calculated && (
+//               <div className="mt-4 space-y-3">
+//                 <div className="grid grid-cols-2 gap-2">
+//                   <div className="rounded-2xl bg-[#EAF7E8] p-3 text-center">
+//                     <p className="text-xs font-bold text-green-800">
+//                       Daily Protein Need
+//                     </p>
+//                     <p className="mt-1 text-2xl font-black text-[#103B27]">
+//                       {proteinNeed} g
+//                     </p>
+//                     <p className="text-[11px] text-gray-600">per day</p>
+//                   </div>
+
+//                   <div className="rounded-2xl bg-orange-50 p-3 text-center">
+//                     <p className="text-xs font-bold text-orange-800">Your BMI</p>
+//                     <p className="mt-1 text-2xl font-black text-gray-900">
+//                       {bmi.toFixed(1)}
+//                     </p>
+//                     <span
+//                       className={`mt-1 inline-block rounded-full px-2 py-1 text-xs font-bold ${bmiColor(bmi)}`}
+//                     >
+//                       {bmiLabel(bmi)}
+//                     </span>
+//                   </div>
+//                 </div>
+
+//                 <div className="rounded-2xl bg-green-50 p-3">
+//                   <h3 className="flex items-center gap-2 text-sm font-extrabold text-[#103B27]">
+//                     <CheckCircle2 size={18} className="text-green-700" />
+//                     Your Personalized Recommendation
+//                   </h3>
+
+//                   <ul className="mt-2 space-y-1.5 text-xs text-gray-700">
+//                     <li>✓ Aim for approximately {proteinNeed}g protein per day.</li>
+//                     <li>✓ Spread your protein intake across meals.</li>
+//                     <li>✓ Include a variety of protein-rich foods.</li>
+//                   </ul>
+
+//                   {healthyWeightRange && (
+//                     <p className="mt-2 text-xs text-gray-600">
+//                       Estimated healthy weight range:{" "}
+//                       <strong>{healthyWeightRange} kg</strong>
+//                     </p>
+//                   )}
+//                 </div>
+//               </div>
+//             )}
+//           </div>
+
+//           {/* =================================================
+//               RIGHT: COMMUNITY PROMO
+//           ================================================= */}
+//           <div className="flex flex-col items-center justify-center rounded-2xl bg-white/70 p-4 text-center lg:bg-transparent lg:p-2">
+//             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-green-100">
+//               <Users size={34} className="text-green-700" />
+//             </div>
+
+//             <h3 className="mt-3 text-lg font-extrabold leading-tight text-[#103B27] sm:text-xl">
+//               Join people on the same journey.
+//             </h3>
+
+//             <p className="mt-2 text-sm leading-relaxed text-gray-600">
+//               Get your protein goal and be part of a growing community focused on
+//               better health.
+//             </p>
+
+//             <div className="mt-4 flex -space-x-3">
+//               {[
+//                 "https://i.pravatar.cc/80?img=12",
+//                 "https://i.pravatar.cc/80?img=47",
+//                 "https://i.pravatar.cc/80?img=11",
+//                 "https://i.pravatar.cc/80?img=68",
+//               ].map((src) => (
+//                 <img
+//                   key={src}
+//                   src={src}
+//                   alt="Protein Club member"
+//                   className="h-10 w-10 rounded-full border-2 border-white object-cover shadow-sm"
+//                 />
+//               ))}
+//             </div>
+
+//             <p className="mt-2 text-xs font-bold text-green-800">
+//               Growing together, eating better
+//             </p>
+
+//             <a
+//               href="#protein-club"
+//               className="mt-4 inline-flex items-center justify-center gap-2 text-sm font-extrabold text-green-700 hover:text-green-900"
+//             >
+//               Explore Protein Club
+//               <ArrowRight size={16} />
+//             </a>
+
+//             <div className="mt-5 hidden w-full max-w-[230px] lg:block">
+//               <svg
+//                 viewBox="0 0 220 65"
+//                 fill="none"
+//                 className="w-full"
+//                 aria-hidden="true"
+//               >
+//                 <path
+//                   d="M205 8 C160 10, 105 20, 30 45"
+//                   stroke="#43B84F"
+//                   strokeWidth="2"
+//                   strokeLinecap="round"
+//                   strokeDasharray="5 5"
+//                 />
+//                 <path
+//                   d="M31 45 L43 36 M31 45 L45 49"
+//                   stroke="#43B84F"
+//                   strokeWidth="2"
+//                   strokeLinecap="round"
+//                 />
+//               </svg>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* =================================================
+//             FAMILY PROFILES
+//         ================================================= */}
+//         <div className="mt-4 rounded-3xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+//           <div className="flex flex-wrap items-center justify-between gap-2">
+//             <h3 className="flex items-center gap-2 text-lg font-extrabold text-[#103B27] sm:text-xl">
+//               <Users className="text-green-700" size={23} />
+//               Family Profiles
+//             </h3>
+
+//             <button
+//               type="button"
+//               onClick={() => setNewMemberOpen((prev) => !prev)}
+//               className="inline-flex items-center gap-1 text-sm font-bold text-green-700 hover:text-green-900"
+//             >
+//               {newMemberOpen ? "Close" : "Manage Family"}
+//               <ArrowRight size={16} />
+//             </button>
+//           </div>
+
+//           {/* Family member cards */}
+//           <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+//             {/* Current user */}
+//             <div className="flex flex-col items-center rounded-2xl border border-green-200 bg-green-50/70 p-3 text-center">
+//               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-200 text-green-800">
+//                 <UserRound size={26} />
+//               </div>
+
+//               <p className="mt-2 text-sm font-extrabold text-gray-900">You</p>
+//               <p className="text-lg font-black text-green-800">
+//                 {calculated ? proteinNeed : "--"} g/day
+//               </p>
+//               <p className="text-xs text-gray-600">
+//                 {calculated ? profile : "Calculate first"}
+//               </p>
+//             </div>
+
+//             {family.map((member) => (
+//               <div
+//                 key={member.name}
+//                 className="flex flex-col items-center rounded-2xl border border-gray-200 bg-white p-3 text-center transition hover:border-green-300 hover:shadow-sm"
+//               >
+//                 <img
+//                   src={member.avatar}
+//                   alt={member.name}
+//                   className="h-14 w-14 rounded-full object-cover"
+//                 />
+
+//                 <p className="mt-2 text-sm font-extrabold text-gray-900">
+//                   {member.name}
+//                 </p>
+//                 <p className="text-lg font-black text-green-800">
+//                   {member.protein} g/day
+//                 </p>
+//                 <p className="text-xs text-gray-600">{member.goal}</p>
+//               </div>
+//             ))}
+
+//             {/* Add member */}
+//             <button
+//               type="button"
+//               onClick={() => setNewMemberOpen((prev) => !prev)}
+//               className="flex min-h-[145px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 p-3 text-center transition hover:border-green-400 hover:bg-green-50"
+//             >
+//               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-700">
+//                 <Plus size={25} />
+//               </div>
+
+//               <p className="mt-2 text-sm font-extrabold text-green-800">
+//                 Add Member
+//               </p>
+//             </button>
+//           </div>
+
+//           {/* Add member form */}
+//           {newMemberOpen && (
+//             <div className="mt-4 rounded-2xl border border-green-100 bg-green-50 p-4">
+//               <h4 className="text-sm font-extrabold text-green-900">
+//                 Add a Family Member
+//               </h4>
+
+//               <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+//                 <input
+//                   type="text"
+//                   value={memberName}
+//                   onChange={(e) => setMemberName(e.target.value)}
+//                   placeholder="Member name"
+//                   className="rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-green-500"
+//                 />
+
+//                 <input
+//                   type="number"
+//                   value={memberWeight}
+//                   onChange={(e) => setMemberWeight(e.target.value)}
+//                   placeholder={`Weight (${weightUnit})`}
+//                   className="rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-green-500"
+//                 />
+
+//                 <button
+//                   type="button"
+//                   onClick={handleAddMember}
+//                   className="rounded-xl bg-green-700 px-4 py-2.5 text-sm font-extrabold text-white transition hover:bg-green-800"
+//                 >
+//                   Save Member
+//                 </button>
+//               </div>
+
+//               <p className="mt-2 text-xs text-gray-500">
+//                 Family members are currently saved locally in this component only.
+//               </p>
+//             </div>
+//           )}
+//         </div>
+//       </div>
+//     </section>
+//   );
+// }

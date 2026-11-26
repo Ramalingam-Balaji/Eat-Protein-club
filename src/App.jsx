@@ -7,6 +7,9 @@ import ExploreCommunities from "./pages/ProteinClub/ExploreCommunities";
 
 import ProteinLeaderApplication from "./pages/ProteinClub/ProteinLeaderApplication";
 import CommunityDetails from "./pages/ProteinClub/CommunityDetails";
+import SuggestCommunity from "./pages/ProteinClub/SuggestCommunity";
+import LeaderboardRewards from "./pages/ProteinClub/LeaderboardRewards";
+import ProteinChallenge from "./pages/ProteinClub/ProteinChallenge";
 
 import Franchise from "./pages/Franchise";
 import FoodStores from "./pages/FoodStores";
@@ -23,6 +26,8 @@ import Footer from "./components/Footer";
 import ScrollManager from "./components/ScrollManager";
 //import ScrollToTop from "./components/ScrollToTop";
 import WhatsAppSupport from "./components/WhatsAppSupport";
+
+import ProteinCalculator from "./pages/ProteinCalculator";
 
 export default function AppRoutes() {
   return (
@@ -48,7 +53,22 @@ export default function AppRoutes() {
   path="/protein-club/leader-application"
   element={<ProteinLeaderApplication />}
 />
+<Route
+  path="/protein-club/suggest-community"
+  element={<SuggestCommunity />}
+/>
+<Route
+  path="/protein-club/leaderboard-rewards"
+  element={<LeaderboardRewards />}
+/>
+<Route
+  path="/protein-club/21-day-protein-challenge"
+  element={<ProteinChallenge />}
+/>
 
+        
+          <Route path="/protein-calculator" element={<ProteinCalculator />} />
+          
           <Route path="/food-stores" element={<FoodStores />} />
           <Route path="/food-stores/:category" element={<CategoryStores />} />
 

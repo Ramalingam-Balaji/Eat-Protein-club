@@ -8,6 +8,7 @@ import FoodCategories from "../components/FoodCategories";
 import AppPromo from "../components/AppPromo";
 import HowItWorks from "../components/HowItWorks";
 import FranchiseSection from "../components/FranchiseSection";
+import ProteinClubBottomSections from "../components/ProteinClubBottomSections";
 import ProteinPacks from "../components/ProteinPacks";
 //import About from "../components/About";
 //import Refer from "../components/Refer";
@@ -95,6 +96,7 @@ export default function Home() {
         <section id="how-it-works" className="scroll-mt-24">
           <HowItWorks />
         </section>
+        <ProteinClubBottomSections />
       </main>
     </div>
   );
