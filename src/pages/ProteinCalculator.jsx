@@ -241,7 +241,7 @@
 //   return (
 //     <main className="min-h-screen bg-white pb-8">
 //       {/* HERO BANNER */}
-//       <section className="overflow-hidden bg-gradient-to-r from-[#F1FAF0] via-white to-[#EAF7E8]">
+//       <section className="overflow-hidden bg-gradient-to-r from-protein-soft via-white to-protein-tint">
 //         <div className="mx-auto grid max-w-[1440px] items-center gap-6 px-4 py-6 sm:px-6 md:grid-cols-2 lg:px-8 lg:py-8">
 //           {/* Hero text */}
 //           <div>
@@ -251,7 +251,7 @@
 //               </div>
 
 //               <div className="min-w-0">
-//                 <h1 className="text-3xl font-black leading-tight tracking-tight text-[#103B27] sm:text-4xl lg:text-5xl">
+//                 <h1 className="text-3xl font-black leading-tight tracking-tight text-protein-dark sm:text-4xl lg:text-5xl">
 //                   Protein Calculator
 //                 </h1>
 //                 <p className="mt-1 text-base leading-snug text-gray-800 sm:text-lg lg:text-xl">
@@ -560,7 +560,7 @@
 //                 {/* Stats cards */}
 //                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
 //                   {/* Protein */}
-//                   <div className="flex min-w-0 flex-col justify-center rounded-2xl border border-green-100 bg-gradient-to-br from-green-50 to-[#F0F9EC] p-3 text-center sm:p-4">
+//                   <div className="flex min-w-0 flex-col justify-center rounded-2xl border border-green-100 bg-gradient-to-br from-green-50 to-protein-soft p-3 text-center sm:p-4">
 //                     <div className="mb-1 flex items-center justify-center gap-2">
 //                       <Salad size={30} className="text-green-600" />
 //                       <p className="text-sm font-extrabold leading-tight text-gray-900">
@@ -569,7 +569,7 @@
 //                         Protein Need
 //                       </p>
 //                     </div>
-//                     <p className="mt-2 text-3xl font-black text-[#103B27] sm:text-4xl">
+//                     <p className="mt-2 text-3xl font-black text-protein-dark sm:text-4xl">
 //                       {results.dailyProtein} g
 //                       <span className="text-lg"> / day</span>
 //                     </p>
@@ -605,7 +605,7 @@
 //                         Healthy Weight Range
 //                       </p>
 //                     </div>
-//                     <p className="mt-2 text-2xl font-black text-[#103B27] sm:text-3xl">
+//                     <p className="mt-2 text-2xl font-black text-protein-dark sm:text-3xl">
 //                       {results.healthyMin} – {results.healthyMax}
 //                       <span className="text-base"> kg</span>
 //                     </p>
@@ -613,7 +613,7 @@
 //                 </div>
 
 //                 {/* Recommendation */}
-//                 <div className="mt-4 overflow-hidden rounded-2xl bg-gradient-to-r from-[#EFF9EC] to-[#E4F4DF] p-3 sm:p-4">
+//                 <div className="mt-4 overflow-hidden rounded-2xl bg-gradient-to-r from-protein-soft to-protein-tint p-3 sm:p-4">
 //                   <div className="flex items-center gap-2">
 //                     <Target size={31} className="shrink-0 text-green-600" />
 //                     <h3 className="text-lg font-extrabold text-gray-900 sm:text-xl">
@@ -693,7 +693,7 @@
 //               </Card>
 
 //               {/* Protein Plan CTA */}
-//               <div className="overflow-hidden rounded-2xl border border-green-100 bg-gradient-to-r from-[#E8F6E4] via-[#F5FBF3] to-[#E7F4E5]">
+//               <div className="overflow-hidden rounded-2xl border border-green-100 bg-gradient-to-r from-protein-tint via-protein-surface to-protein-tint">
 //                 <div className="grid grid-cols-1 items-center gap-3 p-4 sm:grid-cols-[0.8fr_1.2fr] sm:p-5">
 //                   <div className="flex items-center justify-center gap-2 text-5xl sm:text-6xl">
 //                     <span>🥗</span>
@@ -982,6 +982,8 @@ import {
   TrendingUp,
   Scale,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useProteinClubAuth } from "../context/ProteinClubAuthContext";
 
 const initialFamily = [
   {
@@ -1077,6 +1079,9 @@ function SectionHeading({ icon: Icon, title, right, className = "" }) {
 }
 
 function ProteinCalculator() {
+  const navigate = useNavigate();
+  const { user, saveGoalAndTarget, showToast } = useProteinClubAuth();
+  const [savingGoal, setSavingGoal] = useState(false);
   const [gender, setGender] = useState("male");
   const [age, setAge] = useState("43");
   const [heightCm, setHeightCm] = useState("160");
@@ -1085,6 +1090,7 @@ function ProteinCalculator() {
   const [weightUnit, setWeightUnit] = useState("kg");
   const [goal, setGoal] = useState("muscle");
   const [activity, setActivity] = useState("moderate");
+
   const [activeTab, setActiveTab] = useState("personal");
   const [family, setFamily] = useState(initialFamily);
   const [showAddMember, setShowAddMember] = useState(false);
@@ -1098,7 +1104,6 @@ function ProteinCalculator() {
     weightUnit === "kg" ? Number(weight) || 0 : (Number(weight) || 0) / 2.20462;
 
   const selectedActivity = activities.find((a) => a.id === activity);
-  const selectedGoal = goals.find((g) => g.id === goal);
 
   const results = useMemo(() => {
     const safeHeight = height > 0 ? height : 160;
@@ -1107,10 +1112,8 @@ function ProteinCalculator() {
 
     const bmi = safeWeight / (heightMeters * heightMeters);
 
-    const goalFactor =
-      goal === "muscle" ? 1.6 : goal === "lose" ? 1.4 : 1.0;
-
-    const activityFactor = selectedActivity?.multiplier || 1;
+    const matchedActivity = activities.find((a) => a.id === activity);
+    const activityFactor = matchedActivity?.multiplier || 1;
 
     const proteinFactor =
       goal === "muscle"
@@ -1124,7 +1127,7 @@ function ProteinCalculator() {
     const healthyMin = Math.round(18.5 * heightMeters * heightMeters);
     const healthyMax = Math.round(24.9 * heightMeters * heightMeters);
 
-    let bmiStatus = "Healthy";
+    let bmiStatus;
     if (bmi < 18.5) bmiStatus = "Underweight";
     else if (bmi < 25) bmiStatus = "Healthy";
     else if (bmi < 30) bmiStatus = "Overweight";
@@ -1139,7 +1142,38 @@ function ProteinCalculator() {
       proteinFactor,
       heightMeters,
     };
-  }, [height, weightKg, goal, selectedActivity]);
+  }, [height, weightKg, goal, activity]);
+
+  const handleSaveToClub = async () => {
+    const mappedGoal =
+      goal === "muscle"
+        ? "Build Muscle"
+        : goal === "lose"
+        ? "Lose Fat"
+        : "Improve Health";
+
+    if (!user) {
+      navigate(`/protein-club/goal?goal=${encodeURIComponent(mappedGoal)}`);
+      return;
+    }
+
+    setSavingGoal(true);
+    try {
+      await saveGoalAndTarget({
+        goal: mappedGoal,
+        dailyProteinTarget: results.dailyProtein,
+        age: Number(age) || 30,
+        weightKg: Math.round(weightKg) || 69,
+        heightCm: Number(heightCm) || 165,
+        activityLevel: selectedActivity?.label || "Moderately Active",
+      });
+      showToast(
+        `Saved ${results.dailyProtein}g/day (${mappedGoal}) to your Protein Club profile!`
+      );
+    } finally {
+      setSavingGoal(false);
+    }
+  };
 
   const proteinRecommendation =
     goal === "muscle"
@@ -1208,7 +1242,7 @@ function ProteinCalculator() {
   return (
     <main className="min-h-screen bg-white pb-8">
       {/* HERO BANNER */}
-      <section className="overflow-hidden bg-gradient-to-r from-[#F1FAF0] via-white to-[#EAF7E8]">
+      <section className="overflow-hidden bg-gradient-to-r from-protein-soft via-white to-protein-tint">
         <div className="mx-auto grid max-w-[1440px] items-center gap-6 px-4 py-6 sm:px-6 md:grid-cols-2 lg:px-8 lg:py-8">
           {/* Hero text */}
           <div>
@@ -1218,7 +1252,7 @@ function ProteinCalculator() {
               </div>
 
               <div className="min-w-0">
-                <h1 className="text-3xl font-black leading-tight tracking-tight text-[#103B27] sm:text-4xl lg:text-5xl">
+                <h1 className="text-3xl font-black leading-tight tracking-tight text-protein-dark sm:text-4xl lg:text-5xl">
                   Protein Calculator
                 </h1>
                 <p className="mt-1 text-base leading-snug text-gray-800 sm:text-lg lg:text-xl">
@@ -1527,7 +1561,7 @@ function ProteinCalculator() {
                 {/* Stats cards */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                   {/* Protein */}
-                  <div className="flex min-w-0 flex-col justify-center rounded-2xl border border-green-100 bg-gradient-to-br from-green-50 to-[#F0F9EC] p-3 text-center sm:p-4">
+                  <div className="flex min-w-0 flex-col justify-center rounded-2xl border border-green-100 bg-gradient-to-br from-green-50 to-protein-soft p-3 text-center sm:p-4">
                     <div className="mb-1 flex items-center justify-center gap-2">
                       <Salad size={30} className="text-green-600" />
                       <p className="text-sm font-extrabold leading-tight text-gray-900">
@@ -1536,7 +1570,7 @@ function ProteinCalculator() {
                         Protein Need
                       </p>
                     </div>
-                    <p className="mt-2 text-3xl font-black text-[#103B27] sm:text-4xl">
+                    <p className="mt-2 text-3xl font-black text-protein-dark sm:text-4xl">
                       {results.dailyProtein} g
                       <span className="text-lg"> / day</span>
                     </p>
@@ -1572,7 +1606,7 @@ function ProteinCalculator() {
                         Healthy Weight Range
                       </p>
                     </div>
-                    <p className="mt-2 text-2xl font-black text-[#103B27] sm:text-3xl">
+                    <p className="mt-2 text-2xl font-black text-protein-dark sm:text-3xl">
                       {results.healthyMin} – {results.healthyMax}
                       <span className="text-base"> kg</span>
                     </p>
@@ -1580,7 +1614,7 @@ function ProteinCalculator() {
                 </div>
 
                 {/* Recommendation */}
-                <div className="mt-4 overflow-hidden rounded-2xl bg-gradient-to-r from-[#EFF9EC] to-[#E4F4DF] p-3 sm:p-4">
+                <div className="mt-4 overflow-hidden rounded-2xl bg-gradient-to-r from-protein-soft to-protein-tint p-3 sm:p-4">
                   <div className="flex items-center gap-2">
                     <Target size={31} className="shrink-0 text-green-600" />
                     <h3 className="text-lg font-extrabold text-gray-900 sm:text-xl">
@@ -1603,6 +1637,19 @@ function ProteinCalculator() {
                       ))}
                     </div>
                     <div className="hidden text-6xl sm:block">🍱</div>
+                  </div>
+                  <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-green-200/70 pt-3">
+                    <button
+                      type="button"
+                      onClick={handleSaveToClub}
+                      disabled={savingGoal}
+                      className="inline-flex items-center gap-2 rounded-full bg-protein-green px-5 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-protein-hover disabled:opacity-60 sm:text-sm"
+                    >
+                      {savingGoal
+                        ? "Saving to Protein Club..."
+                        : `Save ${results.dailyProtein}g/day to My Protein Club`}
+                      <ArrowRight size={15} />
+                    </button>
                   </div>
                 </div>
 
@@ -1660,7 +1707,7 @@ function ProteinCalculator() {
               </Card>
 
               {/* Protein Plan CTA */}
-              <div className="overflow-hidden rounded-2xl border border-green-100 bg-gradient-to-r from-[#E8F6E4] via-[#F5FBF3] to-[#E7F4E5]">
+              <div className="overflow-hidden rounded-2xl border border-green-100 bg-gradient-to-r from-protein-tint via-protein-surface to-protein-tint">
                 <div className="grid grid-cols-1 items-center gap-3 p-4 sm:grid-cols-[0.8fr_1.2fr] sm:p-5">
                   <div className="flex items-center justify-center gap-2 text-5xl sm:text-6xl">
                     <span>🥗</span>

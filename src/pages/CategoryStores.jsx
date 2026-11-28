@@ -40,9 +40,9 @@ export default function CategoryStores() {
 
   if (!category) {
     return (
-      <main className="flex min-h-[60vh] flex-col items-center justify-center bg-[#f8faf7] px-5 text-center">
-        <Leaf size={44} className="text-[#087b4b]" />
-        <h1 className="mt-4 text-2xl font-extrabold text-[#075c40]">
+      <main className="flex min-h-[60vh] flex-col items-center justify-center bg-protein-surface px-5 text-center">
+        <Leaf size={44} className="text-protein-green" />
+        <h1 className="mt-4 text-2xl font-extrabold text-protein-hover">
           Category not found
         </h1>
         <p className="mt-2 text-sm text-gray-500">
@@ -50,7 +50,7 @@ export default function CategoryStores() {
         </p>
         <button
           onClick={() => navigate("/food-stores")}
-          className="mt-5 rounded-full bg-[#087b4b] px-5 py-3 font-bold text-white hover:bg-[#075c40]"
+          className="mt-5 rounded-full bg-protein-green px-5 py-3 font-bold text-white hover:bg-protein-hover"
         >
           Browse Food Stores
         </button>
@@ -67,7 +67,7 @@ export default function CategoryStores() {
             type="button"
             onClick={() => navigate(-1)}
             aria-label="Go back"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#f1f7f2] text-[#075c40] transition hover:bg-[#dff1e3]"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-protein-soft text-protein-hover transition hover:bg-protein-tint"
           >
             <ArrowLeft size={25} />
           </button>
@@ -79,10 +79,10 @@ export default function CategoryStores() {
               onChange={(event) => setSearch(event.target.value)}
               placeholder={`Search ${category.name} stores`}
               aria-label="Search stores"
-              className="min-w-0 flex-1 rounded-full border border-green-200 bg-[#f8faf7] px-4 py-3 text-sm outline-none focus:border-[#087b4b]"
+              className="min-w-0 flex-1 rounded-full border border-green-200 bg-protein-surface px-4 py-3 text-sm outline-none focus:border-protein-green"
             />
           ) : (
-            <h1 className="flex-1 text-center text-xl font-extrabold text-[#075c40] sm:text-2xl">
+            <h1 className="flex-1 text-center text-xl font-extrabold text-protein-hover sm:text-2xl">
               {category.name}
             </h1>
           )}
@@ -94,7 +94,7 @@ export default function CategoryStores() {
               setSearch("");
             }}
             aria-label={searchOpen ? "Close search" : "Search stores"}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#f1f7f2] text-[#075c40] transition hover:bg-[#dff1e3]"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-protein-soft text-protein-hover transition hover:bg-protein-tint"
           >
             <Search size={23} />
           </button>
@@ -108,7 +108,7 @@ export default function CategoryStores() {
             {category.banners.map((banner, index) => (
               <article
                 key={banner.id}
-                className="group relative min-h-[235px] w-full shrink-0 snap-start overflow-hidden rounded-2xl bg-[#075c40] sm:min-h-[275px] lg:min-w-0"
+                className="group relative min-h-[235px] w-full shrink-0 snap-start overflow-hidden rounded-2xl bg-protein-hover sm:min-h-[275px] lg:min-w-0"
               >
                 <img
                   src={banner.image}
@@ -117,7 +117,7 @@ export default function CategoryStores() {
                   className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-r from-[#034b32]/95 via-[#075c40]/75 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-r from-protein-hover/95 via-protein-hover/75 to-transparent" />
 
                 <div className="relative flex min-h-[235px] max-w-[82%] flex-col items-start justify-center p-5 sm:min-h-[275px] sm:p-7">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-[11px] font-bold text-white ring-1 ring-white/20 sm:text-xs">
@@ -135,7 +135,7 @@ export default function CategoryStores() {
 
                   <a
                     href="#category-stores"
-                    className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#ffcf35] px-4 py-2.5 text-xs font-extrabold text-[#075c40] transition hover:bg-white sm:text-sm"
+                    className="mt-5 inline-flex items-center gap-2 rounded-full bg-protein-gold px-4 py-2.5 text-xs font-extrabold text-protein-hover transition hover:bg-white sm:text-sm"
                   >
                     {banner.button}
                     <ChevronRight size={16} />
@@ -150,7 +150,7 @@ export default function CategoryStores() {
               <span
                 key={banner.id}
                 className={`h-2 rounded-full ${
-                  index === 0 ? "w-5 bg-[#087b4b]" : "w-2 bg-gray-300"
+                  index === 0 ? "w-5 bg-protein-green" : "w-2 bg-gray-300"
                 }`}
               />
             ))}
@@ -161,7 +161,7 @@ export default function CategoryStores() {
         <section id="category-stores" className="scroll-mt-24">
           <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
             <div>
-              <h2 className="text-xl font-extrabold text-[#075c40] sm:text-2xl">
+              <h2 className="text-xl font-extrabold text-protein-hover sm:text-2xl">
                 {category.name} Stores
               </h2>
               <p className="mt-1 text-sm text-gray-500">
@@ -169,7 +169,7 @@ export default function CategoryStores() {
               </p>
             </div>
 
-            <span className="rounded-full bg-[#eaf7ec] px-3 py-1.5 text-xs font-bold text-[#087b4b]">
+            <span className="rounded-full bg-protein-tint px-3 py-1.5 text-xs font-bold text-protein-green">
               {filteredStores.length} stores
             </span>
           </div>
@@ -182,10 +182,10 @@ export default function CategoryStores() {
                   to={`/food-stores/${categorySlug}/${encodeURIComponent(
                     store.name
                   )}`}
-                  className="group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-[0_3px_10px_rgba(0,0,0,0.08)] transition hover:border-[#c4e4cb] hover:shadow-md sm:flex-row"
+                  className="group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-[0_3px_10px_rgba(0,0,0,0.08)] transition hover:border-protein-border hover:shadow-md sm:flex-row"
                 >
                   {/* Store image */}
-                  <div className="h-44 w-full shrink-0 overflow-hidden bg-[#f1f7ef] sm:h-auto sm:min-h-[150px] sm:w-[185px] md:w-[205px]">
+                  <div className="h-44 w-full shrink-0 overflow-hidden bg-protein-soft sm:h-auto sm:min-h-[150px] sm:w-[185px] md:w-[205px]">
                     <img
                       src={store.image}
                       alt={store.name}
@@ -209,13 +209,13 @@ export default function CategoryStores() {
                         <Star
                           size={18}
                           fill="#ffca28"
-                          className="text-[#eab308]"
+                          className="text-protein-gold"
                         />
                         {store.rating}
                       </span>
 
                       <span className="inline-flex items-center gap-1.5">
-                        <Bike size={19} className="text-[#087b4b]" />
+                        <Bike size={19} className="text-protein-green" />
                         {store.minutes} mins
                       </span>
 
@@ -229,7 +229,7 @@ export default function CategoryStores() {
                       <span
                         className={`rounded-md px-3 py-1.5 text-xs font-bold ${
                           store.isOpen
-                            ? "bg-[#e8f7ed] text-[#24834c]"
+                            ? "bg-protein-tint text-protein-green"
                             : "bg-red-50 text-red-600"
                         }`}
                       >
@@ -246,7 +246,7 @@ export default function CategoryStores() {
                   {/* Delivery details */}
                   <div className="flex items-center justify-between gap-3 border-t border-gray-100 px-4 py-3 sm:w-[155px] sm:shrink-0 sm:flex-col sm:items-end sm:justify-center sm:border-l sm:border-t-0 sm:px-4">
                     <div className="text-left sm:text-right">
-                      <p className="text-xs font-bold text-[#087b4b]">
+                      <p className="text-xs font-bold text-protein-green">
                         {store.delivery}
                       </p>
                       <p className="mt-1 text-xs text-gray-400">
@@ -256,7 +256,7 @@ export default function CategoryStores() {
 
                     <ChevronRight
                       size={22}
-                      className="shrink-0 text-gray-400 transition group-hover:translate-x-1 group-hover:text-[#087b4b]"
+                      className="shrink-0 text-gray-400 transition group-hover:translate-x-1 group-hover:text-protein-green"
                     />
                   </div>
                 </Link>
@@ -265,9 +265,9 @@ export default function CategoryStores() {
               <div className="rounded-2xl border border-dashed border-gray-200 px-5 py-14 text-center">
                 <Search
                   size={34}
-                  className="mx-auto text-[#087b4b]"
+                  className="mx-auto text-protein-green"
                 />
-                <h3 className="mt-3 font-bold text-[#075c40]">
+                <h3 className="mt-3 font-bold text-protein-hover">
                   No stores found
                 </h3>
                 <p className="mt-1 text-sm text-gray-500">
@@ -275,7 +275,7 @@ export default function CategoryStores() {
                 </p>
                 <button
                   onClick={() => setSearch("")}
-                  className="mt-4 rounded-full bg-[#087b4b] px-5 py-2.5 text-sm font-bold text-white hover:bg-[#075c40]"
+                  className="mt-4 rounded-full bg-protein-green px-5 py-2.5 text-sm font-bold text-white hover:bg-protein-hover"
                 >
                   Clear search
                 </button>

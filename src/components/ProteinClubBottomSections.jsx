@@ -1,30 +1,14 @@
 import React, { useState } from "react";
-import {
-  Calculator,
-  CalendarDays,
-  ChartNoAxesColumnIncreasing,
-  Gift,
-  ArrowRight,
-  ArrowLeft,
-  CheckCircle2,
-  Users,
-} from "lucide-react";
+import { ArrowRight, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
-
-const green = "#13852F";
-const orange = "#F4770B";
-
-
-/* =========================================================
-   SECTION 2: COMMUNITY SUCCESS STORIES
-========================================================= */
+import { clubImages } from "../pages/ProteinClub/data/communities";
 
 const testimonials = [
   {
     name: "Rohit S.",
     location: "Vijayawada",
     goal: "Muscle Gain",
-    image: "https://i.pravatar.cc/120?img=12",
+    image: clubImages.buildMuscle,
     quote:
       "The 21-Day Challenge helped me build a consistent protein routine. I've gained 4 kg of lean muscle!",
   },
@@ -32,7 +16,7 @@ const testimonials = [
     name: "Priya M.",
     location: "Hyderabad",
     goal: "Family Health",
-    image: "https://i.pravatar.cc/120?img=47",
+    image: clubImages.women,
     quote:
       "As a working mom, the EatProtein community gives me easy, practical protein ideas for my whole family.",
   },
@@ -40,7 +24,7 @@ const testimonials = [
     name: "Suresh K.",
     location: "Kavali",
     goal: "Better Health",
-    image: "https://i.pravatar.cc/120?img=68",
+    image: clubImages.healthyLiving50,
     quote:
       "I'm 52 and feel more energetic after tracking my protein and joining the community.",
   },
@@ -48,7 +32,7 @@ const testimonials = [
     name: "Anjali R.",
     location: "Guntur",
     goal: "Healthy Lifestyle",
-    image: "https://i.pravatar.cc/120?img=44",
+    image: clubImages.vegetarian,
     quote:
       "Tracking my daily protein intake has helped me become more mindful about my food choices.",
   },
@@ -56,7 +40,7 @@ const testimonials = [
     name: "Vikram P.",
     location: "Chennai",
     goal: "Fitness",
-    image: "https://i.pravatar.cc/120?img=15",
+    image: clubImages.eggDairy,
     quote:
       "The challenges keep me motivated. It's easier to stay consistent when people support you.",
   },
@@ -88,14 +72,14 @@ export function CommunitySuccessStories() {
         {/* Intro */}
         <div className="flex flex-row items-center justify-between gap-3 lg:flex-col lg:items-start">
           <div>
-            <h2 className="text-xl font-extrabold leading-tight text-[#103B27] sm:text-2xl">
+            <h2 className="text-xl font-extrabold leading-tight text-protein-dark sm:text-2xl">
               Community
               <br className="hidden lg:block" /> Success Stories
             </h2>
 
-            <div className="mt-2 h-1 w-12 rounded-full bg-green-700" />
+            <div className="mt-2 h-1 w-12 rounded-full bg-protein-green" />
 
-            <p className="mt-3 max-w-xs text-sm leading-relaxed text-gray-600">
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-protein-muted">
               Real people. Real results. Healthier lives with the EatProtein
               Protein Club.
             </p>
@@ -104,17 +88,19 @@ export function CommunitySuccessStories() {
           {/* Controls */}
           <div className="flex shrink-0 gap-2 lg:mt-3">
             <button
+              type="button"
               onClick={previous}
               aria-label="Previous success story"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm transition hover:border-green-600 hover:text-green-700"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-protein-border bg-white text-protein-dark shadow-sm transition hover:border-protein-green hover:text-protein-green"
             >
               <ArrowLeft size={17} />
             </button>
 
             <button
+              type="button"
               onClick={next}
               aria-label="Next success story"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm transition hover:border-green-600 hover:text-green-700"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-protein-border bg-white text-protein-dark shadow-sm transition hover:border-protein-green hover:text-protein-green"
             >
               <ArrowRight size={17} />
             </button>
@@ -126,33 +112,33 @@ export function CommunitySuccessStories() {
           {visibleTestimonials.map((person, index) => (
             <article
               key={`${person.name}-${activeIndex}`}
-              className={`flex gap-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-sm transition hover:shadow-md ${
+              className={`flex gap-3 rounded-2xl border border-protein-border/75 bg-white p-3.5 shadow-sm transition hover:shadow-md ${
                 index === 2 ? "hidden xl:flex" : ""
               }`}
             >
               <img
                 src={person.image}
                 alt={person.name}
-                className="h-14 w-14 shrink-0 rounded-full border-2 border-green-100 object-cover sm:h-16 sm:w-16"
+                className="h-14 w-14 shrink-0 rounded-full border-2 border-protein-border object-cover sm:h-16 sm:w-16"
                 loading="lazy"
               />
 
               <div className="min-w-0">
-                <p className="text-sm leading-relaxed text-gray-700">
-                  <span className="mr-1 text-lg font-black text-[#103B27]">
+                <p className="text-sm leading-relaxed text-protein-text/90">
+                  <span className="mr-1 text-lg font-black text-protein-dark">
                     “
                   </span>
                   {person.quote}
-                  <span className="ml-1 text-lg font-black text-[#103B27]">
+                  <span className="ml-1 text-lg font-black text-protein-dark">
                     ”
                   </span>
                 </p>
 
-                <p className="mt-2 text-sm font-extrabold text-gray-900">
+                <p className="mt-2 text-sm font-extrabold text-protein-dark">
                   {person.name}
                 </p>
 
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-protein-muted">
                   {person.location} · {person.goal}
                 </p>
               </div>
@@ -163,10 +149,6 @@ export function CommunitySuccessStories() {
     </section>
   );
 }
-
-/* =========================================================
-   SECTION 3: JOIN PROTEIN CLUB CTA
-========================================================= */
 
 const joinBenefits = [
   "Know your protein requirement",
@@ -182,26 +164,25 @@ export function JoinProteinClubBanner() {
       id="protein-club-join"
       className="px-3 py-4 sm:px-5 lg:px-6"
     >
-      <div className="relative mx-auto max-w-[1440px] overflow-hidden rounded-3xl bg-gradient-to-r from-[#12652D] via-[#087A36] to-[#005421] text-white shadow-md">
-        {/* Background decoration */}
-        <div className="pointer-events-none absolute -right-12 -top-16 h-48 w-48 rounded-full bg-green-300/10 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-16 left-1/3 h-44 w-44 rounded-full bg-lime-300/10 blur-3xl" />
+      <div className="relative mx-auto max-w-[1440px] overflow-hidden rounded-3xl bg-gradient-to-r from-protein-dark via-protein-green to-protein-hover text-white shadow-md">
+        <div className="pointer-events-none absolute -right-12 -top-16 h-48 w-48 rounded-full bg-protein-lime/15 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-16 left-1/3 h-44 w-44 rounded-full bg-protein-lime/15 blur-3xl" />
 
         <div className="relative grid grid-cols-1 gap-5 p-5 sm:p-7 lg:grid-cols-[1.1fr_1.4fr_0.9fr] lg:items-center lg:gap-7 lg:p-8">
           {/* Member image group */}
           <div className="flex items-center justify-center lg:justify-start">
             <div className="flex -space-x-5 sm:-space-x-6">
               {[
-                "https://i.pravatar.cc/180?img=12",
-                "https://i.pravatar.cc/180?img=47",
-                "https://i.pravatar.cc/180?img=15",
-                "https://i.pravatar.cc/180?img=68",
+                clubImages.buildMuscle,
+                clubImages.women,
+                clubImages.family,
+                clubImages.healthyLiving50,
               ].map((src, i) => (
                 <img
                   key={src}
                   src={src}
                   alt={`Protein Club member ${i + 1}`}
-                  className="h-16 w-16 rounded-full border-[3px] border-green-800 object-cover shadow-md sm:h-20 sm:w-20 lg:h-[88px] lg:w-[88px]"
+                  className="h-16 w-16 rounded-full border-[3px] border-protein-dark object-cover shadow-md sm:h-20 sm:w-20 lg:h-[88px] lg:w-[88px]"
                   loading="lazy"
                 />
               ))}
@@ -212,26 +193,26 @@ export function JoinProteinClubBanner() {
           <div className="text-center lg:text-left">
             <h2 className="text-xl font-extrabold leading-tight sm:text-2xl lg:text-3xl">
               Join the EatProtein{" "}
-              <span className="text-lime-300">Protein Club</span>
+              <span className="text-protein-lime">Protein Club</span>
             </h2>
 
-            <p className="mt-2 text-sm text-green-50 sm:text-base">
+            <p className="mt-2 text-sm text-white/90 sm:text-base">
               Build better protein habits together.
             </p>
 
             <div className="mt-4 flex flex-col justify-center gap-2 sm:flex-row lg:justify-start">
               <Link
-  to="/protein-club"
-  className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-2.5 text-sm font-extrabold text-white shadow-md transition hover:-translate-y-0.5 hover:from-orange-600 hover:to-orange-700"
->
-  Join Free <ArrowRight size={16} />
-</Link>
+                to="/protein-club"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-protein-orange to-protein-orange2 px-6 py-2.5 text-sm font-extrabold text-white shadow-md transition hover:-translate-y-0.5 hover:shadow-lg"
+              >
+                Join Free <ArrowRight size={16} />
+              </Link>
 
               <a
                 href="https://play.google.com/store/apps/details?id=com.mannschaft.eatprotien"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-2.5 text-sm font-extrabold text-green-800 shadow-sm transition hover:bg-green-50"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-2.5 text-sm font-extrabold text-protein-dark shadow-sm transition hover:bg-protein-soft"
               >
                 <span className="text-base">↓</span>
                 Download App
@@ -240,12 +221,12 @@ export function JoinProteinClubBanner() {
           </div>
 
           {/* Benefits */}
-          <div className="flex flex-col gap-2 border-t border-green-300/30 pt-4 lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0">
+          <div className="flex flex-col gap-2 border-t border-white/20 pt-4 lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0">
             {joinBenefits.map((benefit) => (
               <div key={benefit} className="flex items-start gap-2">
                 <CheckCircle2
                   size={17}
-                  className="mt-0.5 shrink-0 text-lime-300"
+                  className="mt-0.5 shrink-0 text-protein-lime"
                 />
                 <span className="text-xs font-medium text-white sm:text-sm">
                   {benefit}
@@ -259,14 +240,9 @@ export function JoinProteinClubBanner() {
   );
 }
 
-/* =========================================================
-   ALL THREE NEW SECTIONS
-========================================================= */
-
 export default function ProteinClubBottomSections() {
   return (
     <>
-     
       <CommunitySuccessStories />
       <JoinProteinClubBanner />
     </>

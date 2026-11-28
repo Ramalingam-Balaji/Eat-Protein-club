@@ -306,9 +306,9 @@
 
 //       <section
 //         id="store-partner"
-//         className="relative isolate overflow-hidden bg-[#f0faed]"
+//         className="relative isolate overflow-hidden bg-protein-soft"
 //       >
-//         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#f6fff3] via-[#f0faed] to-[#e5f4d9]" />
+//         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-protein-surface via-protein-soft to-protein-tint" />
 
 //         <div className="mx-auto grid max-w-[1400px] items-center gap-7 px-4 py-9 sm:px-6 sm:py-12 lg:grid-cols-2 lg:gap-5 lg:px-10 lg:py-14">
 //           {/* Hero content */}
@@ -484,7 +484,7 @@
 
 //       <section
 //         id="store-how-it-works"
-//         className="mx-3 rounded-2xl bg-[#eff9e9] px-4 py-7 sm:mx-5 sm:px-6 sm:py-9 lg:mx-6 lg:px-8"
+//         className="mx-3 rounded-2xl bg-protein-soft px-4 py-7 sm:mx-5 sm:px-6 sm:py-9 lg:mx-6 lg:px-8"
 //       >
 //         <div className="mx-auto max-w-[1360px]">
 //           <SectionLabel>Simple Onboarding</SectionLabel>
@@ -1475,8 +1475,8 @@
 
 //      <section
 //   id="store-partner"
-// className="relative isolate m-0 block w-full overflow-hidden bg-gradient-to-r from-[#f6fff3] via-[#f0faed] to-[#e5f4d9] p-0">
-//         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#f6fff3] via-[#f0faed] to-[#e5f4d9]" />
+// className="relative isolate m-0 block w-full overflow-hidden bg-gradient-to-r from-protein-surface via-protein-soft to-protein-tint p-0">
+//         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-protein-surface via-protein-soft to-protein-tint" />
 
 //         <div className="mx-auto grid max-w-[1400px] items-center gap-7 px-4 py-9 sm:px-6 sm:py-12 lg:grid-cols-2 lg:gap-5 lg:px-10 lg:py-14">
 //           {/* Hero content */}
@@ -1651,7 +1651,7 @@
 
 //       <section
 //         id="store-how-it-works"
-//         className="mx-3 rounded-2xl bg-[#eff9e9] px-4 py-7 sm:mx-5 sm:px-6 sm:py-9 lg:mx-6 lg:px-8"
+//         className="mx-3 rounded-2xl bg-protein-soft px-4 py-7 sm:mx-5 sm:px-6 sm:py-9 lg:mx-6 lg:px-8"
 //       >
 //         <div className="mx-auto max-w-[1360px]">
 //           <SectionLabel>Simple Onboarding</SectionLabel>
@@ -1867,7 +1867,7 @@
 //                 <p className="text-xs font-bold uppercase tracking-widest text-orange-500">
 //                   Join Our Network
 //                 </p>
-//                 <h2 className="mt-1 text-xl font-black text-[#173b27] sm:text-2xl">
+//                 <h2 className="mt-1 text-xl font-black text-protein-dark sm:text-2xl">
 //                   Store Partnership Application
 //                 </h2>
 //               </div>
@@ -1890,7 +1890,7 @@
 //               <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
 //                 {/* Left column */}
 //                 <div>
-//                   <h3 className="mb-5 flex items-center gap-2 font-extrabold text-[#173b27]">
+//                   <h3 className="mb-5 flex items-center gap-2 font-extrabold text-protein-dark">
 //                     <StoreIcon size={19} className="text-green-600" />
 //                     Store Information
 //                   </h3>
@@ -2073,7 +2073,7 @@
 //                 {/* Right column: location */}
 //                 <div>
 //                   <div className="flex flex-wrap items-center justify-between gap-3">
-//                     <h3 className="flex items-center gap-2 font-extrabold text-[#173b27]">
+//                     <h3 className="flex items-center gap-2 font-extrabold text-protein-dark">
 //                       <MapPin size={19} className="text-green-600" />
 //                       Your Location
 //                     </h3>
@@ -2537,7 +2537,7 @@ function SectionHeading({ eyebrow, title, description }) {
   return (
     <div className="mx-auto mb-7 max-w-3xl text-center sm:mb-9">
       {eyebrow && (
-        <p className="mb-2 text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#D7201A] sm:text-xs">
+        <p className="mb-2 text-[10px] font-extrabold uppercase tracking-[0.18em] text-protein-orange sm:text-xs">
           {eyebrow}
         </p>
       )}
@@ -2922,15 +2922,15 @@ useEffect(() => {
       {/* HERO */}
       <section
         id="store-partner"
-        className="relative isolate m-0 block w-full overflow-hidden bg-gradient-to-r from-[#f6fff3] via-[#f0faed] to-[#e5f4d9] p-0"
+        className="relative isolate m-0 block w-full overflow-hidden bg-gradient-to-r from-protein-surface via-protein-soft to-protein-tint p-0"
       >
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#f6fff3] via-[#f0faed] to-[#e5f4d9]" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-protein-surface via-protein-soft to-protein-tint" />
 
         <div className="mx-auto grid max-w-[1400px] items-center gap-7 px-4 py-9 sm:px-6 sm:py-12 lg:grid-cols-2 lg:gap-5 lg:px-10 lg:py-14">
           <div className="relative z-20 order-1">
             <SectionLabel>For Store Owners</SectionLabel>
 
-            <h1 className="mt-3 max-w-xl text-4xl font-black leading-[1.08] tracking-tight text-[#101e28] sm:text-5xl lg:text-[52px]">
+            <h1 className="mt-3 max-w-xl text-4xl font-black leading-[1.08] tracking-tight text-protein-dark sm:text-5xl lg:text-[52px]">
               Join EatProtein
               <span className="block">
                 as a <span className="text-green-700">Store Partner</span>
@@ -2946,7 +2946,7 @@ useEffect(() => {
               <button
                 type="button"
                 onClick={scrollToRegistration}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D7201A] px-5 py-3 text-xs font-extrabold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#B91C1C] sm:px-6 sm:text-sm"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-protein-orange px-5 py-3 text-xs font-extrabold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-protein-orange2 sm:px-6 sm:text-sm"
               >
                 Register Your Store <ArrowRight size={16} />
               </button>
@@ -3033,7 +3033,7 @@ useEffect(() => {
       {/* HOW IT WORKS */}
       <section
         id="store-how-it-works"
-        className="mx-3 rounded-2xl bg-[#eff9e9] px-4 py-7 sm:mx-5 sm:px-6 sm:py-9 lg:mx-6 lg:px-8"
+        className="mx-3 rounded-2xl bg-protein-soft px-4 py-7 sm:mx-5 sm:px-6 sm:py-9 lg:mx-6 lg:px-8"
       >
         <div className="mx-auto max-w-[1360px]">
           <SectionLabel>Simple Onboarding</SectionLabel>
@@ -3119,7 +3119,7 @@ useEffect(() => {
       </section>
 
       {/* COMMUNITY BANNER */}
-      <section id="store-community" className="relative isolate overflow-hidden bg-[#164d28]">
+      <section id="store-community" className="relative isolate overflow-hidden bg-protein-dark">
         <img
           src="/assets/store-partner-community.png"
           alt="Healthy food store and local store partner community"
@@ -3144,7 +3144,7 @@ useEffect(() => {
             <button
               type="button"
               onClick={scrollToRegistration}
-              className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#D7201A] px-6 py-3 text-sm font-extrabold text-white shadow-lg transition hover:bg-[#B91C1C]"
+              className="mt-5 inline-flex items-center gap-2 rounded-full bg-protein-orange px-6 py-3 text-sm font-extrabold text-white shadow-lg transition hover:bg-protein-orange2"
             >
               Register Your Store <ArrowRight size={16} />
             </button>
@@ -3182,12 +3182,12 @@ useEffect(() => {
             aria-labelledby="store-modal-title"
             className="relative flex max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
           >
-            <div className="flex shrink-0 items-center justify-between border-b border-green-100 bg-[#f5fbf2] px-5 py-4 sm:px-7">
+            <div className="flex shrink-0 items-center justify-between border-b border-protein-border bg-protein-surface px-5 py-4 sm:px-7">
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest text-orange-500">
                   Join Our Network
                 </p>
-                <h2 id="store-modal-title" className="mt-1 text-xl font-black text-[#173b27] sm:text-2xl">
+                <h2 id="store-modal-title" className="mt-1 text-xl font-black text-protein-dark sm:text-2xl">
                   Store Partnership Application
                 </h2>
               </div>
@@ -3206,7 +3206,7 @@ useEffect(() => {
               <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
                 {/* STORE INFORMATION */}
                 <div>
-                  <h3 className="mb-5 flex items-center gap-2 font-extrabold text-[#173b27]">
+                  <h3 className="mb-5 flex items-center gap-2 font-extrabold text-protein-dark">
                     <StoreIcon size={19} className="text-green-600" />
                     Store Information
                   </h3>
@@ -3620,7 +3620,7 @@ useEffect(() => {
                 {/* LOCATION AND MAP */}
                 <div>
                   <div className="flex flex-wrap items-center justify-between gap-3">
-                    <h3 className="flex items-center gap-2 font-extrabold text-[#173b27]">
+                    <h3 className="flex items-center gap-2 font-extrabold text-protein-dark">
                       <MapPin size={19} className="text-green-600" />
                       Your Location
                     </h3>
@@ -3644,7 +3644,7 @@ useEffect(() => {
                     the available address fields. Location access is optional.
                   </p>
 
-                  <div className="mt-4 h-[260px] overflow-hidden rounded-2xl border border-green-100 bg-[#f2f7ec] sm:h-[320px]">
+                  <div className="mt-4 h-[260px] overflow-hidden rounded-2xl border border-protein-border bg-protein-soft sm:h-[320px]">
                     <iframe
                       key={mapQuery}
                       title="Store location map"

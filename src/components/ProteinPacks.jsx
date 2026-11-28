@@ -28,13 +28,13 @@ export default function ProteinPacks() {
       return;
     }
 
-    window.location.href = pack.buttonLink;
+    window.location.assign(pack.buttonLink);
   };
 
   return (
     <section
       id="protein-packs"
-      className="overflow-hidden bg-[#f7faf5] py-14 sm:py-16 lg:py-5"
+      className="overflow-hidden bg-protein-surface py-14 sm:py-16 lg:py-5"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Heading and category filter */}
@@ -42,7 +42,7 @@ export default function ProteinPacks() {
           <div className="max-w-2xl">
             <SectionTag>PROTEIN PACKS</SectionTag>
 
-            <h2 className="mt-3 text-2xl font-extrabold leading-tight tracking-tight text-[#102e2b] sm:text-3xl lg:text-4xl">
+            <h2 className="mt-3 text-2xl font-extrabold leading-tight tracking-tight text-protein-dark sm:text-3xl lg:text-4xl">
               Daily. Weekly. Monthly Packs
             </h2>
 
@@ -56,7 +56,7 @@ export default function ProteinPacks() {
           <div className="flex flex-wrap items-center gap-2">
            {/* <UsersRound
               size={21}
-              className="mr-1 text-[#168344]"
+              className="mr-1 text-protein-green"
             />*/}
 
             {PACK_CATEGORIES.map((category) => {
@@ -70,8 +70,8 @@ export default function ProteinPacks() {
                   aria-pressed={isActive}
                   className={`rounded-full border px-4 py-2 text-sm font-semibold transition-all duration-200 ${
                     isActive
-                      ? "border-[#087d3d] bg-[#087d3d] text-white shadow-sm"
-                      : "border-[#d6e5d8] bg-white text-[#28543b] hover:border-[#168344] hover:bg-green-50"
+                      ? "border-protein-green bg-protein-green text-white shadow-sm"
+                      : "border-protein-border bg-white text-protein-dark hover:border-protein-green hover:bg-protein-soft"
                   }`}
                 >
                  {category.label}
@@ -92,13 +92,13 @@ export default function ProteinPacks() {
                 key={`${activeCategory}-${type.id}`}
                 className={`relative flex min-w-0 flex-col overflow-hidden rounded-2xl border bg-white p-4 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg sm:p-5 ${
                   index === 1
-                    ? "border-[#a5d9b0]"
-                    : "border-[#e7eee6]"
+                    ? "border-protein-border"
+                    : "border-protein-border"
                 }`}
               >
                 {/* Popular badge */}
                {/* {type.badge && (
-                  <span className="absolute right-4 top-0 z-10 rounded-b-lg bg-[#087d3d] px-3 py-1.5 text-[10px] font-bold text-white sm:right-5">
+                  <span className="absolute right-4 top-0 z-10 rounded-b-lg bg-protein-green px-3 py-1.5 text-[10px] font-bold text-white sm:right-5">
                     {type.badge}
                   </span>
                 )} */}
@@ -112,7 +112,7 @@ export default function ProteinPacks() {
                       <Icon size={20} className={type.iconColor} />
                     </div>
 
-                    <h3 className="text-base font-extrabold leading-snug text-[#102e2b] sm:text-lg">
+                    <h3 className="text-base font-extrabold leading-snug text-protein-dark sm:text-lg">
                       {pack.title}
                     </h3>
 
@@ -129,7 +129,7 @@ export default function ProteinPacks() {
                         >
                           <CheckCircle2
                             size={14}
-                            className="mt-0.5 shrink-0 fill-[#168344] text-white"
+                            className="mt-0.5 shrink-0 fill-protein-green text-white"
                             strokeWidth={2.5}
                           />
                           <span>{feature}</span>
@@ -156,8 +156,8 @@ export default function ProteinPacks() {
                     onClick={() => handleViewPack(pack)}
                     className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-xs font-bold transition duration-200 sm:text-sm ${
                       index === 1
-                        ? "border-[#91c7a2] bg-white text-[#087d3d] hover:bg-green-50"
-                        : "border-[#91c7a2] bg-white text-[#087d3d] hover:bg-green-50"
+                        ? "border-protein-border bg-white text-protein-green hover:bg-green-50"
+                        : "border-protein-border bg-white text-protein-green hover:bg-green-50"
                     }`}
                   >
                     {pack.buttonLabel}

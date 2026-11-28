@@ -163,7 +163,7 @@
 
 // function SectionTag({ children }) {
 //   return (
-//     <span className="inline-flex items-center rounded-full bg-[#e4f5df] px-3 py-1 text-[10px] font-extrabold uppercase tracking-wide text-[#176b35] sm:text-xs">
+//     <span className="inline-flex items-center rounded-full bg-protein-tint px-3 py-1 text-[10px] font-extrabold uppercase tracking-wide text-protein-green sm:text-xs">
 //       {children}
 //     </span>
 //   );
@@ -178,7 +178,7 @@
 //         </p>
 //       )}
 
-//       <h2 className="text-2xl font-black leading-tight tracking-tight text-[#10251c] sm:text-3xl lg:text-[34px]">
+//       <h2 className="text-2xl font-black leading-tight tracking-tight text-protein-dark sm:text-3xl lg:text-[34px]">
 //         {title}
 //       </h2>
 
@@ -202,7 +202,7 @@
 //         <Icon size={23} strokeWidth={2.3} />
 //       </div>
 
-//       <h3 className="text-sm font-extrabold text-[#14251c] sm:text-base">
+//       <h3 className="text-sm font-extrabold text-protein-dark sm:text-base">
 //         {item.title}
 //       </h3>
 
@@ -276,19 +276,19 @@
 //   };
 
 //   return (
-//     <main className="min-h-screen overflow-hidden bg-white font-sans text-[#17231d]">
+//     <main className="min-h-screen overflow-hidden bg-white font-sans text-protein-dark">
 //       {/* HERO */}
 //       <section
 //         id="franchise"
-//         className="relative overflow-hidden bg-gradient-to-r from-[#f0fae9] via-[#f8fcf4] to-[#edf8e8]"
+//         className="relative overflow-hidden bg-gradient-to-r from-protein-soft via-protein-surface to-protein-soft"
 //       >
 //         <div className="mx-auto grid max-w-7xl items-center gap-5 px-4 py-8 sm:px-6 sm:py-12 lg:grid-cols-2 lg:gap-8 lg:px-8 lg:py-14">
 //           <div className="relative z-10">
 //             <SectionTag>Business Opportunity</SectionTag>
 
-//             <h1 className="mt-4 max-w-xl text-[34px] font-black leading-[1.08] tracking-tight text-[#10251c] sm:text-4xl md:text-5xl lg:text-[48px]">
+//             <h1 className="mt-4 max-w-xl text-[34px] font-black leading-[1.08] tracking-tight text-protein-dark sm:text-4xl md:text-5xl lg:text-[48px]">
 //               Grow a Healthier Community with{" "}
-//               <span className="text-[#087b3c]">EatProtein</span>
+//               <span className="text-protein-green">EatProtein</span>
 //             </h1>
 
 //             <p className="mt-4 max-w-lg text-sm leading-6 text-gray-600 sm:text-base">
@@ -325,7 +325,7 @@
 //                     key={item.title}
 //                     className="flex flex-col items-center text-center sm:items-start sm:text-left"
 //                   >
-//                     <div className="mb-2 grid h-10 w-10 place-items-center rounded-full bg-white text-[#087b3c] shadow-sm">
+//                     <div className="mb-2 grid h-10 w-10 place-items-center rounded-full bg-white text-protein-green shadow-sm">
 //                       <Icon size={22} />
 //                     </div>
 //                     <p className="max-w-24 text-[10px] font-bold leading-4 text-gray-700 sm:text-[11px]">
@@ -390,10 +390,10 @@
 
 //       {/* HOW IT WORKS */}
 //       <section id="how-it-works" className="px-3 pb-8 sm:px-6 sm:pb-12 lg:px-8">
-//         <div className="mx-auto max-w-7xl rounded-[26px] bg-gradient-to-r from-[#eef9e8] to-[#f3fbef] px-4 py-6 sm:px-7 sm:py-8">
+//         <div className="mx-auto max-w-7xl rounded-[26px] bg-gradient-to-r from-protein-soft to-protein-soft px-4 py-6 sm:px-7 sm:py-8">
 //           <SectionTag>How It Works</SectionTag>
 
-//           <h2 className="mt-2 text-2xl font-black tracking-tight text-[#10251c] sm:text-3xl">
+//           <h2 className="mt-2 text-2xl font-black tracking-tight text-protein-dark sm:text-3xl">
 //             A Simple and Transparent Model
 //           </h2>
 
@@ -446,7 +446,7 @@
 //           <div>
 //             <SectionTag>Your Role as an Area Partner</SectionTag>
 
-//             <h2 className="mt-2 text-2xl font-black tracking-tight text-[#10251c] sm:text-3xl">
+//             <h2 className="mt-2 text-2xl font-black tracking-tight text-protein-dark sm:text-3xl">
 //               What You Will Do
 //             </h2>
 
@@ -469,7 +469,7 @@
 //           <div className="border-t border-gray-100 pt-7 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
 //             <SectionTag>Our Support to You</SectionTag>
 
-//             <h2 className="mt-2 text-2xl font-black tracking-tight text-[#10251c] sm:text-3xl">
+//             <h2 className="mt-2 text-2xl font-black tracking-tight text-protein-dark sm:text-3xl">
 //               What You Get from EatProtein
 //             </h2>
 
@@ -497,7 +497,7 @@
 //       </section>
 
 //       {/* COMMUNITY IMPACT BANNER */}
-//       <section className="relative isolate overflow-hidden bg-[#eef9e8]">
+//       <section className="relative isolate overflow-hidden bg-protein-soft">
 //         {/* Background banner image */}
 //         <img
 //           src="/assets/franchise-community-reference.png"
@@ -510,7 +510,7 @@
 //           {/* <div className="w-full max-w-md">
 //             <SectionTag>Our Impact</SectionTag>
 
-//             <h2 className="mt-3 text-2xl font-black leading-tight text-[#10251c] sm:text-3xl lg:text-4xl">
+//             <h2 className="mt-3 text-2xl font-black leading-tight text-protein-dark sm:text-3xl lg:text-4xl">
 //               More Healthy Communities With You
 //             </h2>
 
@@ -542,12 +542,12 @@
 //         id="contact"
 //         className="bg-white px-3 py-6 sm:px-6 sm:py-10 lg:px-8"
 //       >
-//         <div className="mx-auto max-w-7xl rounded-[24px] bg-gradient-to-r from-[#edf8e7] to-[#f6fbf2] p-4 sm:p-6 lg:p-8">
+//         <div className="mx-auto max-w-7xl rounded-[24px] bg-gradient-to-r from-protein-soft to-protein-surface p-4 sm:p-6 lg:p-8">
 //           <div className="grid items-start gap-6 lg:grid-cols-[0.75fr_1.55fr] lg:gap-8">
 //             <div className="lg:sticky lg:top-8">
 //               <SectionTag>Get Started</SectionTag>
 
-//               <h2 className="mt-3 text-3xl font-black leading-[1.08] tracking-tight text-[#10251c] sm:text-4xl lg:text-[42px]">
+//               <h2 className="mt-3 text-3xl font-black leading-[1.08] tracking-tight text-protein-dark sm:text-4xl lg:text-[42px]">
 //                 Send Your{" "}
 //                 <span className="text-green-700">Franchise Inquiry</span>
 //               </h2>
@@ -608,7 +608,7 @@
 //                 </div>
 //               ) : (
 //                 <>
-//                   <h3 className="text-lg font-black text-[#153b25] sm:text-xl">
+//                   <h3 className="text-lg font-black text-protein-dark sm:text-xl">
 //                     Franchise Inquiry
 //                   </h3>
 
@@ -634,7 +634,7 @@
 //                           autoComplete="name"
 //                           maxLength={100}
 //                           required
-//                           className="w-full rounded-lg border border-gray-200 bg-[#fbfcfb] px-3 py-3 text-xs outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:bg-white focus:ring-2 focus:ring-green-100"
+//                           className="w-full rounded-lg border border-gray-200 bg-protein-surface px-3 py-3 text-xs outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:bg-white focus:ring-2 focus:ring-green-100"
 //                         />
 //                       </div>
 
@@ -658,7 +658,7 @@
 //                           title="Enter a valid 10-digit Indian mobile number"
 //                           maxLength={10}
 //                           required
-//                           className="w-full rounded-lg border border-gray-200 bg-[#fbfcfb] px-3 py-3 text-xs outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:bg-white focus:ring-2 focus:ring-green-100"
+//                           className="w-full rounded-lg border border-gray-200 bg-protein-surface px-3 py-3 text-xs outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:bg-white focus:ring-2 focus:ring-green-100"
 //                         />
 //                       </div>
 
@@ -679,7 +679,7 @@
 //                           autoComplete="email"
 //                           maxLength={254}
 //                           required
-//                           className="w-full rounded-lg border border-gray-200 bg-[#fbfcfb] px-3 py-3 text-xs outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:bg-white focus:ring-2 focus:ring-green-100"
+//                           className="w-full rounded-lg border border-gray-200 bg-protein-surface px-3 py-3 text-xs outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:bg-white focus:ring-2 focus:ring-green-100"
 //                         />
 //                       </div>
 
@@ -700,7 +700,7 @@
 //                           autoComplete="address-level2"
 //                           maxLength={150}
 //                           required
-//                           className="w-full rounded-lg border border-gray-200 bg-[#fbfcfb] px-3 py-3 text-xs outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:bg-white focus:ring-2 focus:ring-green-100"
+//                           className="w-full rounded-lg border border-gray-200 bg-protein-surface px-3 py-3 text-xs outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:bg-white focus:ring-2 focus:ring-green-100"
 //                         />
 //                       </div>
 
@@ -716,7 +716,7 @@
 //                           name="investment"
 //                           value={formData.investment}
 //                           onChange={handleChange}
-//                           className="w-full rounded-lg border border-gray-200 bg-[#fbfcfb] px-3 py-3 text-xs text-gray-600 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-100"
+//                           className="w-full rounded-lg border border-gray-200 bg-protein-surface px-3 py-3 text-xs text-gray-600 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-100"
 //                         >
 //                           <option value="">Select your budget range</option>
 //                           <option value="Below ₹5 Lakhs">Below ₹5 Lakhs</option>
@@ -743,7 +743,7 @@
 //                           onChange={handleChange}
 //                           placeholder="e.g. I want to know more about area partnership"
 //                           maxLength={1000}
-//                           className="w-full rounded-lg border border-gray-200 bg-[#fbfcfb] px-3 py-3 text-xs outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:bg-white focus:ring-2 focus:ring-green-100"
+//                           className="w-full rounded-lg border border-gray-200 bg-protein-surface px-3 py-3 text-xs outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:bg-white focus:ring-2 focus:ring-green-100"
 //                         />
 //                       </div>
 //                     </div>
@@ -760,7 +760,7 @@
 //                     <button
 //                       type="submit"
 //                       disabled={status === "sending"}
-//                       className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#087b3c] to-[#006b32] px-5 py-3.5 text-xs font-extrabold text-white shadow-md transition hover:from-green-800 hover:to-green-900 disabled:cursor-not-allowed disabled:opacity-70 sm:text-sm"
+//                       className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-protein-green to-protein-green px-5 py-3.5 text-xs font-extrabold text-white shadow-md transition hover:from-green-800 hover:to-green-900 disabled:cursor-not-allowed disabled:opacity-70 sm:text-sm"
 //                     >
 //                       {status === "sending" ? (
 //                         <>
@@ -949,7 +949,7 @@ const allowedInvestments = [
 function SectionTag({ children, className = "" }) {
   return (
     <span
-      className={`inline-flex w-fit items-center justify-center rounded-full border border-[#cce8c5] bg-[#e4f5df] px-3 py-1 text-[10px] font-extrabold uppercase tracking-wide text-[#176b35] sm:text-xs ${className}`}
+      className={`inline-flex w-fit items-center justify-center rounded-full border border-protein-border bg-protein-tint px-3 py-1 text-[10px] font-extrabold uppercase tracking-wide text-protein-green sm:text-xs ${className}`}
     >
       {children}
     </span>
@@ -958,7 +958,7 @@ function SectionTag({ children, className = "" }) {
 
 // function SectionTag({ children }) {
 //   return (
-//     <span className="inline-flex items-center rounded-full bg-[#e4f5df] px-3 py-1 text-[10px] font-extrabold uppercase tracking-wide text-[#176b35] sm:text-xs">
+//     <span className="inline-flex items-center rounded-full bg-protein-tint px-3 py-1 text-[10px] font-extrabold uppercase tracking-wide text-protein-green sm:text-xs">
 //       {children}
 //     </span>
 //   );
@@ -968,12 +968,12 @@ function SectionHeading({ eyebrow, title, description }) {
   return (
     <div className="mb-7 text-center sm:mb-9">
       {eyebrow && (
-        <p className="mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#D7201A] sm:text-xs">
+        <p className="mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-protein-orange sm:text-xs">
           {eyebrow}
         </p>
       )}
 
-      <h2 className="text-2xl font-black leading-tight tracking-tight text-[#10251c] sm:text-3xl lg:text-[34px]">
+      <h2 className="text-2xl font-black leading-tight tracking-tight text-protein-dark sm:text-3xl lg:text-[34px]">
         {title}
       </h2>
 
@@ -997,7 +997,7 @@ function FeatureCard({ item }) {
         <Icon size={23} strokeWidth={2.3} />
       </div>
 
-      <h3 className="text-sm font-extrabold text-[#14251c] sm:text-base">
+      <h3 className="text-sm font-extrabold text-protein-dark sm:text-base">
         {item.title}
       </h3>
 
@@ -1140,7 +1140,7 @@ export default function Franchise() {
 
   const fieldClass = (name) =>
     `w-full rounded-lg border ${
-      errors[name] ? "border-red-500 bg-red-50" : "border-gray-200 bg-[#fbfcfb]"
+      errors[name] ? "border-red-500 bg-red-50" : "border-gray-200 bg-protein-surface"
     } px-3 py-3 text-xs outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:bg-white focus:ring-2 ${
       errors[name] ? "focus:ring-red-100" : "focus:ring-green-100"
     }`;
@@ -1214,19 +1214,19 @@ export default function Franchise() {
   };
 
   return (
-    <main className="min-h-screen overflow-hidden bg-white font-sans text-[#17231d]">
+    <main className="min-h-screen overflow-hidden bg-white font-sans text-protein-dark">
       {/* HERO */}
       <section
         id="franchise"
-        className="relative overflow-hidden bg-gradient-to-r from-[#f0fae9] via-[#f8fcf4] to-[#edf8e8]"
+        className="relative overflow-hidden bg-gradient-to-r from-protein-soft via-protein-surface to-protein-soft"
       >
         <div className="mx-auto grid max-w-7xl items-center gap-5 px-4 py-8 sm:px-6 sm:py-12 lg:grid-cols-2 lg:gap-8 lg:px-8 lg:py-14">
           <div className="relative z-10">
             <SectionTag>Business Opportunity</SectionTag>
 
-            <h1 className="mt-4 max-w-xl text-[34px] font-black leading-[1.08] tracking-tight text-[#10251c] sm:text-4xl md:text-5xl lg:text-[48px]">
+            <h1 className="mt-4 max-w-xl text-[34px] font-black leading-[1.08] tracking-tight text-protein-dark sm:text-4xl md:text-5xl lg:text-[48px]">
               Grow a Healthier Community with{" "}
-              <span className="text-[#087b3c]">EatProtein</span>
+              <span className="text-protein-green">EatProtein</span>
             </h1>
 
             <p className="mt-4 max-w-lg text-sm leading-6 text-gray-600 sm:text-base">
@@ -1238,7 +1238,7 @@ export default function Franchise() {
             <div className="mt-5 flex flex-col gap-3 min-[420px]:flex-row">
               <a
                 href="#contact"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D7201A] px-5 py-3 text-xs font-extrabold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#B91C1C] sm:text-sm"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-protein-orange px-5 py-3 text-xs font-extrabold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-protein-orange2 sm:text-sm"
               >
                 Send Franchise Inquiry
                 <ArrowRight size={16} />
@@ -1254,7 +1254,7 @@ export default function Franchise() {
                     key={item.title}
                     className="flex flex-col items-center text-center sm:items-start sm:text-left"
                   >
-                    <div className="mb-2 grid h-10 w-10 place-items-center rounded-full bg-white text-[#087b3c] shadow-sm">
+                    <div className="mb-2 grid h-10 w-10 place-items-center rounded-full bg-white text-protein-green shadow-sm">
                       <Icon size={22} />
                     </div>
                     <p className="max-w-24 text-[10px] font-bold leading-4 text-gray-700 sm:text-[11px]">
@@ -1318,10 +1318,10 @@ export default function Franchise() {
 
       {/* HOW IT WORKS */}
       <section id="how-it-works" className="px-3 pb-8 sm:px-6 sm:pb-12 lg:px-8">
-        <div className="mx-auto max-w-7xl rounded-[26px] bg-gradient-to-r from-[#eef9e8] to-[#f3fbef] px-4 py-6 sm:px-7 sm:py-8">
+        <div className="mx-auto max-w-7xl rounded-[26px] bg-gradient-to-r from-protein-soft to-protein-soft px-4 py-6 sm:px-7 sm:py-8">
           <SectionTag>How It Works</SectionTag>
 
-          <h2 className="mt-2 text-2xl font-black tracking-tight text-[#10251c] sm:text-3xl">
+          <h2 className="mt-2 text-2xl font-black tracking-tight text-protein-dark sm:text-3xl">
             A Simple and Transparent Model
           </h2>
 
@@ -1368,7 +1368,7 @@ export default function Franchise() {
           <div>
             <SectionTag>Your Role as an Area Partner</SectionTag>
 
-            <h2 className="mt-2 text-2xl font-black tracking-tight text-[#10251c] sm:text-3xl">
+            <h2 className="mt-2 text-2xl font-black tracking-tight text-protein-dark sm:text-3xl">
               What You Will Do
             </h2>
 
@@ -1391,7 +1391,7 @@ export default function Franchise() {
           <div className="border-t border-gray-100 pt-7 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
             <SectionTag>Our Support to You</SectionTag>
 
-            <h2 className="mt-2 text-2xl font-black tracking-tight text-[#10251c] sm:text-3xl">
+            <h2 className="mt-2 text-2xl font-black tracking-tight text-protein-dark sm:text-3xl">
               What You Get from EatProtein
             </h2>
 
@@ -1419,7 +1419,7 @@ export default function Franchise() {
       </section>
 
       {/* COMMUNITY IMPACT BANNER */}
-      <section className="relative isolate overflow-hidden bg-[#eef9e8]">
+      <section className="relative isolate overflow-hidden bg-protein-soft">
         <img
           src="/assets/franchise-community-reference.png"
           alt="Healthy food choices, EatProtein app and a happy family"
@@ -1437,14 +1437,14 @@ export default function Franchise() {
   id="contact"
   className="bg-white px-3 py-6 sm:px-6 sm:py-10 lg:px-8"
 >
-  <div className="mx-auto max-w-7xl rounded-[24px] bg-gradient-to-r from-[#edf8e7] to-[#f6fbf2] p-4 sm:p-6 lg:p-8">
+  <div className="mx-auto max-w-7xl rounded-[24px] bg-gradient-to-r from-protein-soft to-protein-surface p-4 sm:p-6 lg:p-8">
     <div className="grid items-stretch gap-6 lg:grid-cols-[0.75fr_1.55fr] lg:gap-8">
 
       {/* LEFT SIDE - VERTICALLY CENTERED */}
       <div className="flex flex-col justify-center lg:sticky lg:top-8 lg:self-stretch">
         <SectionTag>Get Started</SectionTag>
 
-        <h2 className="mt-3 text-3xl font-black leading-[1.08] tracking-tight text-[#10251c] sm:text-4xl lg:text-[42px]">
+        <h2 className="mt-3 text-3xl font-black leading-[1.08] tracking-tight text-protein-dark sm:text-4xl lg:text-[42px]">
           Send Your{" "}
           <span className="text-green-700">Franchise Inquiry</span>
         </h2>
@@ -1507,7 +1507,7 @@ export default function Franchise() {
           </div>
         ) : (
           <>
-            <h3 className="text-lg font-black text-[#153b25] sm:text-xl">
+            <h3 className="text-lg font-black text-protein-dark sm:text-xl">
               Franchise Inquiry
             </h3>
 
@@ -1738,7 +1738,7 @@ export default function Franchise() {
               <button
                 type="submit"
                 disabled={status === "sending"}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#087b3c] to-[#006b32] px-5 py-3.5 text-xs font-extrabold text-white shadow-md transition hover:from-green-800 hover:to-green-900 disabled:cursor-not-allowed disabled:opacity-70 sm:text-sm"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-protein-green to-protein-green px-5 py-3.5 text-xs font-extrabold text-white shadow-md transition hover:from-green-800 hover:to-green-900 disabled:cursor-not-allowed disabled:opacity-70 sm:text-sm"
               >
                 {status === "sending" ? (
                   <>

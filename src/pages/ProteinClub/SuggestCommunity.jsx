@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowRight,
   Home,
@@ -20,9 +20,10 @@ import {
   MapPin,
   Flame,
   Trophy,
-  Leaf,
   Utensils,
 } from "lucide-react";
+import { useProteinClubAuth } from "../../context/ProteinClubAuthContext";
+import { submitCommunitySuggestion } from "../../services/proteinClubService";
 
 const communityIdeas = [
   {
@@ -118,6 +119,9 @@ function SectionHeading({ icon: Icon, title, color = "text-green-600" }) {
 }
 
 function SuggestCommunity() {
+  const navigate = useNavigate();
+  const { user, showToast } = useProteinClubAuth();
+
   const [communityName, setCommunityName] = useState("");
   const [audience, setAudience] = useState("Individuals");
   const [goal, setGoal] = useState("");
@@ -125,45 +129,60 @@ function SuggestCommunity() {
   const [reason, setReason] = useState("");
   const [useCase, setUseCase] = useState("");
   const [agreed, setAgreed] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const handleIdeaClick = (idea) => {
     setCommunityName(idea.name);
     setGoal(idea.goal);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!user) {
+      showToast("Please sign in first to submit a community suggestion.", "info");
+      navigate("/protein-club/register");
+      return;
+    }
+
     if (!agreed) {
-      alert("Please accept the Community Guidelines before submitting.");
+      showToast("Please accept the Community Guidelines before submitting.", "error");
       return;
     }
 
     if (!communityName.trim() || !audience || !goal || !reason.trim()) {
-      alert("Please complete all required fields.");
+      showToast("Please complete all required fields.", "error");
       return;
     }
 
-    const suggestion = {
-      communityName,
-      audience,
-      goal,
-      diet,
-      reason,
-      useCase,
-    };
-
-    console.log("Community Suggestion:", suggestion);
-
-    alert("Your community suggestion has been submitted successfully!");
-
-    setCommunityName("");
-    setAudience("Individuals");
-    setGoal("");
-    setDiet("Any");
-    setReason("");
-    setUseCase("");
-    setAgreed(false);
+    setSubmitting(true);
+    try {
+      await submitCommunitySuggestion({
+        user,
+        data: {
+          communityName: communityName.trim(),
+          audience,
+          goal,
+          diet,
+          reason: reason.trim(),
+          useCase: useCase.trim(),
+        },
+      });
+      setSubmitted(true);
+      showToast("Your community suggestion has been submitted for admin review!");
+      setCommunityName("");
+      setAudience("Individuals");
+      setGoal("");
+      setDiet("Any");
+      setReason("");
+      setUseCase("");
+      setAgreed(false);
+    } catch (err) {
+      showToast(err?.message || "Could not submit community suggestion.", "error");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -194,7 +213,7 @@ function SuggestCommunity() {
       </div>
 
       {/* Hero */}
-      <section className="mt-3 overflow-hidden bg-gradient-to-r from-[#F1F9ED] via-[#F7FCF5] to-[#E6F5E3]">
+      <section className="mt-3 overflow-hidden bg-gradient-to-r from-protein-soft via-protein-surface to-protein-tint">
         <div className="mx-auto grid max-w-[1440px] items-center gap-6 px-4 py-7 sm:px-6 md:grid-cols-2 md:py-10 lg:px-10">
           {/* Hero Text */}
           <div className="flex items-center gap-4 sm:gap-6">
@@ -207,7 +226,7 @@ function SuggestCommunity() {
             </div>
 
             <div>
-              <h1 className="text-3xl font-black leading-tight tracking-tight text-[#103B27] sm:text-4xl lg:text-5xl">
+              <h1 className="text-3xl font-black leading-tight tracking-tight text-protein-dark sm:text-4xl lg:text-5xl">
                 Suggest a Community
               </h1>
 
@@ -433,7 +452,7 @@ function SuggestCommunity() {
                 <span>
                   I agree to the{" "}
                   <Link
-                    to="/protein-club/community-guidelines"
+                    to="/terms"
                     className="font-semibold text-green-700 underline underline-offset-2 hover:text-green-900"
                   >
                     EatProtein Community Guidelines
@@ -442,13 +461,20 @@ function SuggestCommunity() {
                 </span>
               </label>
 
+              {submitted && (
+                <div className="rounded-xl border border-green-200 bg-green-50 p-3 text-xs font-semibold text-green-800">
+                  Suggestion received! Our Protein Club admins review new community requests regularly.
+                </div>
+              )}
+
               {/* Submit */}
               <button
                 type="submit"
-                className="mx-auto flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 px-5 py-3 text-sm font-bold text-white shadow-md transition hover:-translate-y-0.5 hover:from-orange-600 hover:to-orange-700 sm:w-[75%] sm:text-base"
+                disabled={submitting}
+                className="mx-auto flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 px-5 py-3 text-sm font-bold text-white shadow-md transition hover:-translate-y-0.5 hover:from-orange-600 hover:to-orange-700 disabled:opacity-60 sm:w-[75%] sm:text-base"
               >
                 <Send size={19} />
-                Submit Suggestion
+                {submitting ? "Submitting..." : "Submit Suggestion"}
                 <ArrowRight size={19} />
               </button>
             </form>
@@ -526,7 +552,7 @@ function SuggestCommunity() {
             </InfoCard>
 
             {/* Protein Leader */}
-            <InfoCard className="bg-gradient-to-br from-[#F7FCF3] to-[#EDF8E9]">
+            <InfoCard className="bg-gradient-to-br from-protein-surface to-protein-soft">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                 <div className="min-w-0 flex-1">
                   <div className="mb-2 flex items-center gap-2">
@@ -564,7 +590,7 @@ function SuggestCommunity() {
 
       {/* Bottom Banner */}
       <section className="mx-auto max-w-[1440px] px-4 pt-6 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#72CA35] via-[#229A36] to-[#087332] px-5 py-7 text-white shadow-sm sm:px-8 sm:py-9">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-protein-lime via-protein-green to-protein-green px-5 py-7 text-white shadow-sm sm:px-8 sm:py-9">
           <div className="relative z-10 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-3 sm:gap-5">
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white/15 sm:h-20 sm:w-20">

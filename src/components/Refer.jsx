@@ -339,7 +339,7 @@
 //             "
 //           >
 //             {/* Popup header */}
-//             <div className="relative overflow-hidden bg-[#075c40] px-6 pb-7 pt-8 text-center text-white">
+//             <div className="relative overflow-hidden bg-protein-hover px-6 pb-7 pt-8 text-center text-white">
 //               <button
 //                 type="button"
 //                 onClick={closeModal}
@@ -374,7 +374,7 @@
 //               {/* Referral link */}
 //               <label
 //                 htmlFor="referral-link"
-//                 className="mb-2 block text-sm font-bold text-[#075c40]"
+//                 className="mb-2 block text-sm font-bold text-protein-hover"
 //               >
 //                 Your referral link
 //               </label>
@@ -382,7 +382,7 @@
 //               <div className="flex min-w-0 items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 p-2">
 //                 <LinkIcon
 //                   size={18}
-//                   className="ml-1 shrink-0 text-[#087b4b]"
+//                   className="ml-1 shrink-0 text-protein-green"
 //                 />
 
 //                 <input
@@ -403,9 +403,9 @@
 //                   className="
 //                     inline-flex shrink-0 items-center
 //                     justify-center gap-1.5 rounded-lg
-//                     bg-[#087b4b] px-3 py-2.5
+//                     bg-protein-green px-3 py-2.5
 //                     text-xs font-bold text-white
-//                     transition hover:bg-[#075c40]
+//                     transition hover:bg-protein-hover
 //                     sm:text-sm
 //                   "
 //                 >
@@ -417,7 +417,7 @@
 //               {copied && (
 //                 <p
 //                   role="status"
-//                   className="mt-2 text-xs font-semibold text-[#087b4b]"
+//                   className="mt-2 text-xs font-semibold text-protein-green"
 //                 >
 //                   Link copied to clipboard!
 //                 </p>
@@ -870,7 +870,7 @@ const ReferFriend = () => {
             <div
               className="
                 relative overflow-hidden
-                bg-[#075c40] px-6 pb-7
+                bg-protein-hover px-6 pb-7
                 pt-8 text-center text-white
               "
             >
@@ -925,7 +925,7 @@ const ReferFriend = () => {
                 htmlFor="referral-link"
                 className="
                   mb-2 block text-sm
-                  font-bold text-[#075c40]
+                  font-bold text-protein-hover
                 "
               >
                 Your referral link
@@ -941,7 +941,7 @@ const ReferFriend = () => {
               >
                 <LinkIcon
                   size={18}
-                  className="ml-1 shrink-0 text-[#087b4b]"
+                  className="ml-1 shrink-0 text-protein-green"
                 />
 
                 <input
@@ -963,9 +963,9 @@ const ReferFriend = () => {
                     inline-flex shrink-0
                     items-center justify-center
                     gap-1.5 rounded-lg
-                    bg-[#087b4b] px-3 py-2.5
+                    bg-protein-green px-3 py-2.5
                     text-xs font-bold text-white
-                    transition hover:bg-[#075c40]
+                    transition hover:bg-protein-hover
                     sm:text-sm
                   "
                 >
@@ -985,7 +985,7 @@ const ReferFriend = () => {
                   role="status"
                   className="
                     mt-2 text-xs font-semibold
-                    text-[#087b4b]
+                    text-protein-green
                   "
                 >
                   Link copied to clipboard!

@@ -163,7 +163,7 @@ export const getStoreItems = (storeName) =>
   FOOD_STORE_ITEMS[storeName] || [];
 
 // Helper: get unique product labels for a store
-export const getStoreLabels = (sreName) => [
+export const getStoreLabels = (storeName) => [
   "All",
   ...new Set(getStoreItems(storeName).flatMap((item) => item.labels)),
 ];

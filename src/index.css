@@ -1,157 +1,42 @@
-/* @tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root {
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #0d1f17;
-  background: #ffffff;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-}
-
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 100px;
-}
-
-body {
-  margin: 0;
-  min-width: 320px;
-  background: rgb(40, 34, 34);
-}
-
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-button,
-input,
-select {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-::selection {
-  background: #bfe7ad;
-  color: #062d1d;
-}
-
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #91c9a4;
-  border-radius: 999px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f5f7f4;
-} */
-/* 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+  --ep-primary: #0B7A3B;
+  --ep-primary-rgb: 11 122 59;
+  --ep-primary-hover: #075E2D;
+  --ep-primary-hover-rgb: 7 94 45;
+  --ep-dark: #053D1E;
+  --ep-dark-rgb: 5 61 30;
+  --ep-footer: #032A14;
+  --ep-footer-rgb: 3 42 20;
+  --ep-lime: #84CC16;
+  --ep-lime-rgb: 132 204 22;
+  --ep-accent: #FF6B00;
+  --ep-accent-rgb: 255 107 0;
+  --ep-accent-hover: #E25B00;
+  --ep-accent-hover-rgb: 226 91 0;
+  --ep-gold: #F59E0B;
+  --ep-gold-rgb: 245 158 11;
+  --ep-tint: #F1F9EC;
+  --ep-tint-rgb: 241 249 236;
+  --ep-tint-strong: #E2F2D8;
+  --ep-tint-strong-rgb: 226 242 216;
+  --ep-surface: #F7FBF4;
+  --ep-surface-rgb: 247 251 244;
+  --ep-canvas: #FFFFFF;
+  --ep-text: #0D2216;
+  --ep-text-rgb: 13 34 22;
+  --ep-muted: #4B6354;
+  --ep-muted-rgb: 75 99 84;
+  --ep-border: #D9EBD1;
+  --ep-border-rgb: 217 235 209;
+
+  font-family: "Plus Jakarta Sans", "DM Sans", ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #0d1f17;
-  background: #ffffff;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html {
-  width: 100%;
-  min-width: 320px;
-  scroll-behavior: smooth;
-  scroll-padding-top: 100px;
-}
-
-body {
-  width: 100%;
-  min-width: 320px;
-  margin: 0;
-  background: #ffffff;
-  overflow-x: hidden;
-}
-
-#root {
-  width: 100%;
-  min-height: 100vh;
-}
-
-img {
-  max-width: 100%;
-}
-
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-button,
-input,
-select,
-textarea {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-::selection {
-  background: #bfe7ad;
-  color: #062d1d;
-}
-
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #91c9a4;
-  border-radius: 999px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f5f7f4;
-} */
-
-
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root {
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system,
-    BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #0d1f17;
-  background: #ffffff;
+  color: var(--ep-text);
+  background: var(--ep-canvas);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -178,7 +63,8 @@ body {
   min-width: 320px;
   margin: 0 !important;
   padding: 0 !important;
-  background: #ffffff;
+  color: var(--ep-text);
+  background: var(--ep-canvas);
   overflow-x: clip;
 }
 
@@ -214,9 +100,18 @@ button {
   cursor: pointer;
 }
 
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--ep-primary);
+  outline-offset: 2px;
+}
+
 ::selection {
-  background: #bfe7ad;
-  color: #062d1d;
+  background: var(--ep-tint-strong);
+  color: var(--ep-dark);
 }
 
 ::-webkit-scrollbar {
@@ -224,12 +119,12 @@ button {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #91c9a4;
+  background: rgb(var(--ep-primary-rgb) / 0.35);
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f5f7f4;
+  background: var(--ep-surface);
 }
 
 @keyframes fadeInHeadline {
@@ -245,5 +140,5 @@ button {
 }
 
 .animate-fade-in {
-  animation: fadeInHeadline 0.5s ease-out;
+  animation: fadeInHeadline 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }

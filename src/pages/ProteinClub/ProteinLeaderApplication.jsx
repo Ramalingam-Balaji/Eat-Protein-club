@@ -5,7 +5,7 @@
 
 // export default function ProteinLeaderApplication() {
 //   return (
-//     <section className="min-h-screen bg-[#F0F8EF] px-4 py-12">
+//     <section className="min-h-screen bg-protein-soft px-4 py-12">
 //       <div className="mx-auto max-w-2xl rounded-3xl bg-white p-6 shadow-sm sm:p-10">
 //         <Link
 //           to="/protein-club/communities"
@@ -19,7 +19,7 @@
 //           <Crown className="text-orange-500" size={34} />
 //         </div>
 
-//         <h1 className="text-3xl font-extrabold text-[#063D27]">
+//         <h1 className="text-3xl font-extrabold text-protein-dark">
 //           Become a Protein Leader
 //         </h1>
 
@@ -83,7 +83,7 @@
 
 
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowRight,
   Home,
@@ -106,6 +106,8 @@ import {
   Star,
   UserRound,
 } from "lucide-react";
+import { useProteinClubAuth } from "../../context/ProteinClubAuthContext";
+import { submitLeaderApplication } from "../../services/proteinClubService";
 
 const benefits = [
   {
@@ -181,21 +183,21 @@ const levels = [
     title: "Protein Leader",
     description: "Lead a community & grow members",
     icon: Star,
-    color: "bg-[#DDF5D7]",
+    color: "bg-protein-tint",
     height: "h-28",
   },
   {
     title: "Senior Protein Leader",
     description: "Drive higher engagement & run bigger initiatives",
     icon: Star,
-    color: "bg-[#B8ED9F]",
+    color: "bg-protein-lime",
     height: "h-36",
   },
   {
     title: "City Protein Champion",
     description: "Lead at city level, host events & represent EatProtein",
     icon: Crown,
-    color: "bg-[#8FE47B]",
+    color: "bg-protein-lime",
     height: "h-44",
   },
 ];
@@ -244,8 +246,11 @@ function SectionTitle({ icon: Icon, children }) {
 }
 
 function ProteinLeaderApplication() {
+  const navigate = useNavigate();
+  const { user, profile, showToast } = useProteinClubAuth();
+
   const [formData, setFormData] = useState({
-    fullName: "",
+    fullName: profile?.displayName || user?.displayName || "",
     city: "",
     occupation: "",
     experience: "",
@@ -255,6 +260,7 @@ function ProteinLeaderApplication() {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const updateField = (e) => {
     const { name, value, type, checked } = e.target;
@@ -265,18 +271,33 @@ function ProteinLeaderApplication() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.agreed) {
-      alert("Please accept the community guidelines and program terms.");
+    if (!user) {
+      showToast("Please sign in first to submit your Protein Leader application.", "info");
+      navigate("/protein-club/register");
       return;
     }
 
-    // Connect your backend / EmailJS submission here.
-    console.log("Protein Leader Application:", formData);
-    setSubmitted(true);
-    alert("Your Protein Leader application has been submitted!");
+    if (!formData.agreed) {
+      showToast("Please accept the community guidelines and program terms.", "error");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await submitLeaderApplication({
+        user,
+        data: formData,
+      });
+      setSubmitted(true);
+      showToast("Your Protein Leader application has been submitted for review!");
+    } catch (err) {
+      showToast(err?.message || "Could not submit your application.", "error");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const inputClass =
@@ -305,7 +326,7 @@ function ProteinLeaderApplication() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative mt-3 overflow-hidden bg-gradient-to-r from-[#F0F9ED] via-[#F9FFF8] to-[#E5F6DF]">
+      <section className="relative mt-3 overflow-hidden bg-gradient-to-r from-protein-soft via-protein-surface to-protein-tint">
         <div className="pointer-events-none absolute -right-20 top-10 h-72 w-72 rounded-full bg-green-200/30 blur-3xl" />
         <div className="pointer-events-none absolute bottom-0 left-[45%] h-48 w-48 rounded-full bg-green-200/40 blur-2xl" />
 
@@ -416,7 +437,7 @@ function ProteinLeaderApplication() {
       {/* Eligibility, Roles, Levels */}
       <section className="mx-auto grid max-w-[1440px] grid-cols-1 gap-4 px-4 py-2 sm:px-6 xl:grid-cols-3 lg:px-8">
         {/* Who can apply */}
-        <div className="rounded-2xl border border-green-100 bg-[#F0F8EF] p-5 sm:p-6">
+        <div className="rounded-2xl border border-green-100 bg-protein-soft p-5 sm:p-6">
           <SectionTitle icon={Users}>Who Can Apply?</SectionTitle>
 
           <ul className="space-y-3">
@@ -635,13 +656,13 @@ function ProteinLeaderApplication() {
                 />
                 <span>
                   I agree to the{" "}
-                  <a href="#" className="font-semibold text-green-700 underline">
+                  <Link to="/terms" className="font-semibold text-green-700 underline">
                     EatProtein Community Guidelines
-                  </a>{" "}
+                  </Link>{" "}
                   and{" "}
-                  <a href="#" className="font-semibold text-green-700 underline">
+                  <Link to="/privacy" className="font-semibold text-green-700 underline">
                     Protein Leader Program Terms
-                  </a>
+                  </Link>
                   .
                 </span>
               </label>
@@ -649,9 +670,10 @@ function ProteinLeaderApplication() {
               {/* Submit */}
               <button
                 type="submit"
-                className="mx-auto flex w-full max-w-md items-center justify-center gap-3 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-3.5 font-bold text-white shadow-md transition hover:-translate-y-0.5 hover:from-orange-600 hover:to-orange-700 hover:shadow-lg"
+                disabled={submitting}
+                className="mx-auto flex w-full max-w-md items-center justify-center gap-3 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-3.5 font-bold text-white shadow-md transition hover:-translate-y-0.5 hover:from-orange-600 hover:to-orange-700 hover:shadow-lg disabled:opacity-60"
               >
-                Submit Application
+                {submitting ? "Submitting..." : "Submit Application"}
                 <ArrowRight size={20} />
               </button>
             </form>
@@ -687,7 +709,7 @@ function ProteinLeaderApplication() {
           </div>
 
           {/* What happens next */}
-          <div className="relative overflow-hidden rounded-2xl border border-green-100 bg-gradient-to-br from-[#F0F8EF] to-[#E2F5DF] p-5 sm:p-6">
+          <div className="relative overflow-hidden rounded-2xl border border-green-100 bg-gradient-to-br from-protein-soft to-protein-tint p-5 sm:p-6">
             <SectionTitle icon={CalendarDays}>What Happens Next?</SectionTitle>
 
             <ul className="space-y-3">

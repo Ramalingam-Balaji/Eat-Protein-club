@@ -1,0 +1,450 @@
+{
+  "entities": {
+    "UserPublicProfile": {
+      "title": "UserPublicProfile",
+      "description": "Publicly visible EatProtein Protein Club member profile without PII.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "photoURL": { "type": "string", "maxLength": 500 },
+        "location": { "type": "string", "maxLength": 100 },
+        "goal": {
+          "type": "string",
+          "enum": ["Build Muscle", "Lose Fat", "Improve Health", "Family Nutrition", "Eat More Protein", "Stay Active"]
+        },
+        "dietPreference": {
+          "type": "string",
+          "enum": ["Veg", "Vegetarian", "Non-Veg", "Non-Vegetarian", "Eggetarian", "Egg & Dairy", "Vegan", "Any"]
+        },
+        "dailyProteinTarget": { "type": "number" },
+        "todayProtein": { "type": "number" },
+        "streak": { "type": "number" },
+        "points": { "type": "number" },
+        "coins": { "type": "number" },
+        "rankBadge": { "type": "string", "maxLength": 40 },
+        "status": { "type": "string", "enum": ["active", "warned", "restricted", "blocked"] },
+        "joinedCommunitiesCount": { "type": "number" },
+        "activeChallengesCount": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "displayName", "goal", "dailyProteinTarget", "points", "coins", "status", "createdAt", "updatedAt"]
+    },
+    "UserPrivateInfo": {
+      "title": "UserPrivateInfo",
+      "description": "Isolated PII and personal biometric profile owned strictly by the user or admins.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "fullName": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 160 },
+        "mobile": { "type": "string", "maxLength": 20 },
+        "age": { "type": "number" },
+        "gender": { "type": "string", "enum": ["Male", "Female", "Other", ""] },
+        "heightCm": { "type": "number" },
+        "weightKg": { "type": "number" },
+        "activityLevel": { "type": "string", "maxLength": 60 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "fullName", "updatedAt"]
+    },
+    "AdminRecord": {
+      "title": "AdminRecord",
+      "description": "Trusted administrator grant document.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "email": { "type": "string", "minLength": 3, "maxLength": 160 },
+        "role": { "type": "string", "enum": ["admin", "super_admin"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role", "createdAt"]
+    },
+    "Community": {
+      "title": "Community",
+      "description": "Protein Club goal-based, life-stage, diet, or local community.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "slug": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "title": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "shortTitle": { "type": "string", "maxLength": 80 },
+        "badge": { "type": "string", "maxLength": 60 },
+        "official": { "type": "boolean" },
+        "category": { "type": "string", "maxLength": 60 },
+        "description": { "type": "string", "maxLength": 500 },
+        "about": { "type": "string", "maxLength": 1200 },
+        "goal": { "type": "string", "maxLength": 60 },
+        "diet": { "type": "array" },
+        "stage": { "type": "array" },
+        "location": { "type": "string", "maxLength": 80 },
+        "heroImage": { "type": "string", "maxLength": 500 },
+        "membersCount": { "type": "number" },
+        "discussionsCount": { "type": "number" },
+        "challengesCount": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "paused"] },
+        "started": { "type": "string", "maxLength": 40 },
+        "benefits": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "slug", "title", "description", "goal", "status", "membersCount", "createdAt", "updatedAt"]
+    },
+    "CommunityMember": {
+      "title": "CommunityMember",
+      "description": "Membership record inside a community subcollection.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "communityId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "photoURL": { "type": "string", "maxLength": 500 },
+        "role": { "type": "string", "enum": ["member", "leader", "moderator"] },
+        "status": { "type": "string", "enum": ["active", "restricted", "blocked"] },
+        "joinedAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "communityId", "displayName", "role", "status", "joinedAt", "updatedAt"]
+    },
+    "CommunityPost": {
+      "title": "CommunityPost",
+      "description": "Community feed post authored by a member or leader.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "communityId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "communitySlug": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "authorId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "authorName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "authorAvatar": { "type": "string", "maxLength": 500 },
+        "authorRole": { "type": "string", "maxLength": 40 },
+        "category": { "type": "string", "enum": ["Progress", "Questions", "Tips", "Recipes", "Workouts", "Poll"] },
+        "text": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "tags": { "type": "array" },
+        "imageUrl": { "type": "string", "maxLength": 500 },
+        "pollOptions": { "type": "array" },
+        "likesCount": { "type": "number" },
+        "commentsCount": { "type": "number" },
+        "status": { "type": "string", "enum": ["published", "hidden", "deleted"] },
+        "isPinned": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "communityId", "communitySlug", "authorId", "authorName", "category", "text", "likesCount", "commentsCount", "status", "isPinned", "createdAt", "updatedAt"]
+    },
+    "PostComment": {
+      "title": "PostComment",
+      "description": "Comment or reply on a community post.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "postId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "authorId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "authorName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "authorAvatar": { "type": "string", "maxLength": 500 },
+        "parentCommentId": { "type": "string", "maxLength": 128 },
+        "text": { "type": "string", "minLength": 1, "maxLength": 1000 },
+        "likesCount": { "type": "number" },
+        "status": { "type": "string", "enum": ["published", "hidden", "deleted"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "postId", "authorId", "authorName", "text", "likesCount", "status", "createdAt", "updatedAt"]
+    },
+    "PostLike": {
+      "title": "PostLike",
+      "description": "Like marker keyed by user UID under a post.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "postId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "postId", "createdAt"]
+    },
+    "SavedPost": {
+      "title": "SavedPost",
+      "description": "Bookmark record stored in user subcollection.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "postId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "communitySlug": { "type": "string", "maxLength": 100 },
+        "savedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "postId", "savedAt"]
+    },
+    "BlockedUser": {
+      "title": "BlockedUser",
+      "description": "User-level personal block list entry.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "blockedUid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "blockedName": { "type": "string", "maxLength": 80 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "blockedUid", "createdAt"]
+    },
+    "Challenge": {
+      "title": "Challenge",
+      "description": "Guided challenge such as 21-Day Protein Challenge.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "title": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "subtitle": { "type": "string", "maxLength": 300 },
+        "communityId": { "type": "string", "maxLength": 128 },
+        "durationDays": { "type": "number" },
+        "goal": { "type": "string", "maxLength": 60 },
+        "participantsCount": { "type": "number" },
+        "rewardPoints": { "type": "number" },
+        "rewardCoins": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "draft", "archived"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "durationDays", "status", "participantsCount", "createdAt", "updatedAt"]
+    },
+    "ChallengeParticipant": {
+      "title": "ChallengeParticipant",
+      "description": "Member progress inside a challenge.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "challengeId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "currentDay": { "type": "number" },
+        "completedDays": { "type": "array" },
+        "streak": { "type": "number" },
+        "pointsEarned": { "type": "number" },
+        "coinsEarned": { "type": "number" },
+        "status": { "type": "string", "enum": ["in_progress", "completed"] },
+        "joinedAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "challengeId", "displayName", "currentDay", "completedDays", "streak", "status", "joinedAt", "updatedAt"]
+    },
+    "ProteinLog": {
+      "title": "ProteinLog",
+      "description": "User daily protein meal log entry.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "date": { "type": "string", "maxLength": 20 },
+        "mealName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "proteinGrams": { "type": "number" },
+        "notes": { "type": "string", "maxLength": 300 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "uid", "date", "mealName", "proteinGrams", "createdAt"]
+    },
+    "RewardCatalogItem": {
+      "title": "RewardCatalogItem",
+      "description": "Redeemable Protein Coins reward offer.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "title": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "description": { "type": "string", "maxLength": 300 },
+        "category": { "type": "string", "maxLength": 60 },
+        "coinsCost": { "type": "number" },
+        "codePrefix": { "type": "string", "maxLength": 20 },
+        "status": { "type": "string", "enum": ["active", "paused"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "coinsCost", "status", "createdAt", "updatedAt"]
+    },
+    "RewardRedemption": {
+      "title": "RewardRedemption",
+      "description": "Issued reward voucher redeemed by a member.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "rewardId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "rewardTitle": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "coinsSpent": { "type": "number" },
+        "couponCode": { "type": "string", "minLength": 4, "maxLength": 40 },
+        "status": { "type": "string", "enum": ["issued", "used"] },
+        "redeemedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "uid", "rewardId", "rewardTitle", "coinsSpent", "couponCode", "status", "redeemedAt"]
+    },
+    "ModerationReport": {
+      "title": "ModerationReport",
+      "description": "Report filed by a member against a post, comment, or member.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "reporterId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "reporterName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "targetType": { "type": "string", "enum": ["post", "comment", "member"] },
+        "targetId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "communityId": { "type": "string", "maxLength": 128 },
+        "reason": { "type": "string", "minLength": 3, "maxLength": 500 },
+        "status": { "type": "string", "enum": ["pending", "reviewed", "resolved", "dismissed"] },
+        "adminNotes": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "reporterId", "reporterName", "targetType", "targetId", "reason", "status", "createdAt", "updatedAt"]
+    },
+    "CommunitySuggestion": {
+      "title": "CommunitySuggestion",
+      "description": "User-submitted suggestion for a new community.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "communityName": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "audience": { "type": "string", "maxLength": 60 },
+        "goal": { "type": "string", "maxLength": 60 },
+        "diet": { "type": "string", "maxLength": 40 },
+        "reason": { "type": "string", "minLength": 5, "maxLength": 1000 },
+        "useCase": { "type": "string", "maxLength": 1000 },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "uid", "communityName", "audience", "goal", "reason", "status", "createdAt", "updatedAt"]
+    },
+    "LeaderApplication": {
+      "title": "LeaderApplication",
+      "description": "Member application to become a Protein Leader.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "fullName": { "type": "string", "minLength": 2, "maxLength": 100 },
+        "city": { "type": "string", "maxLength": 80 },
+        "occupation": { "type": "string", "maxLength": 80 },
+        "experience": { "type": "string", "maxLength": 300 },
+        "interest": { "type": "string", "maxLength": 120 },
+        "reason": { "type": "string", "minLength": 5, "maxLength": 1500 },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "uid", "fullName", "city", "occupation", "interest", "reason", "status", "createdAt", "updatedAt"]
+    },
+    "ClubEvent": {
+      "title": "ClubEvent",
+      "description": "Webinar, meetup, or workshop hosted inside Protein Club.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "title": { "type": "string", "minLength": 2, "maxLength": 140 },
+        "communityId": { "type": "string", "maxLength": 128 },
+        "communityTitle": { "type": "string", "maxLength": 120 },
+        "hostName": { "type": "string", "maxLength": 80 },
+        "dateLabel": { "type": "string", "maxLength": 60 },
+        "timeLabel": { "type": "string", "maxLength": 60 },
+        "type": { "type": "string", "enum": ["Webinar", "Meetup", "Workshop"] },
+        "description": { "type": "string", "maxLength": 500 },
+        "rsvpCount": { "type": "number" },
+        "status": { "type": "string", "enum": ["upcoming", "completed", "cancelled"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "type", "dateLabel", "status", "rsvpCount", "createdAt", "updatedAt"]
+    },
+    "EventRsvp": {
+      "title": "EventRsvp",
+      "description": "Member RSVP registration for an event.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "eventId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "eventId", "displayName", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": {
+      "schema": { "$ref": "#/entities/UserPublicProfile" },
+      "description": "Publicly readable community member summary (no PII) for leaderboard and feed attributions."
+    },
+    "/users/{uid}/private/info": {
+      "schema": { "$ref": "#/entities/UserPrivateInfo" },
+      "description": "Owner-only and admin-only private PII document (email, mobile, age, weight, height)."
+    },
+    "/users/{uid}/savedPosts/{postId}": {
+      "schema": { "$ref": "#/entities/SavedPost" },
+      "description": "User bookmarked posts."
+    },
+    "/users/{uid}/blockedUsers/{blockedUid}": {
+      "schema": { "$ref": "#/entities/BlockedUser" },
+      "description": "User personal block list."
+    },
+    "/users/{uid}/proteinLogs/{logId}": {
+      "schema": { "$ref": "#/entities/ProteinLog" },
+      "description": "User daily protein meal logs."
+    },
+    "/admins/{uid}": {
+      "schema": { "$ref": "#/entities/AdminRecord" },
+      "description": "Trusted administrator grant records."
+    },
+    "/communities/{communityId}": {
+      "schema": { "$ref": "#/entities/Community" },
+      "description": "Protein Club communities managed by admins."
+    },
+    "/communities/{communityId}/members/{memberId}": {
+      "schema": { "$ref": "#/entities/CommunityMember" },
+      "description": "Community membership records keyed by user UID."
+    },
+    "/posts/{postId}": {
+      "schema": { "$ref": "#/entities/CommunityPost" },
+      "description": "Community feed discussions and progress updates."
+    },
+    "/posts/{postId}/comments/{commentId}": {
+      "schema": { "$ref": "#/entities/PostComment" },
+      "description": "Comments and nested replies on a community post."
+    },
+    "/posts/{postId}/likes/{uid}": {
+      "schema": { "$ref": "#/entities/PostLike" },
+      "description": "Likes on a community post keyed by user UID."
+    },
+    "/challenges/{challengeId}": {
+      "schema": { "$ref": "#/entities/Challenge" },
+      "description": "Protein Club challenges including the 21-Day Protein Challenge."
+    },
+    "/challenges/{challengeId}/participants/{uid}": {
+      "schema": { "$ref": "#/entities/ChallengeParticipant" },
+      "description": "Per-user challenge day completions and streak progress."
+    },
+    "/rewards/{rewardId}": {
+      "schema": { "$ref": "#/entities/RewardCatalogItem" },
+      "description": "Redeemable rewards catalog."
+    },
+    "/redemptions/{redemptionId}": {
+      "schema": { "$ref": "#/entities/RewardRedemption" },
+      "description": "Persisted user reward voucher redemptions."
+    },
+    "/reports/{reportId}": {
+      "schema": { "$ref": "#/entities/ModerationReport" },
+      "description": "Moderation reports submitted by members."
+    },
+    "/communitySuggestions/{suggestionId}": {
+      "schema": { "$ref": "#/entities/CommunitySuggestion" },
+      "description": "User-submitted suggestions for new communities."
+    },
+    "/leaderApplications/{applicationId}": {
+      "schema": { "$ref": "#/entities/LeaderApplication" },
+      "description": "Protein Leader applications."
+    },
+    "/events/{eventId}": {
+      "schema": { "$ref": "#/entities/ClubEvent" },
+      "description": "Events and webinars hosted in Protein Club."
+    },
+    "/events/{eventId}/rsvps/{uid}": {
+      "schema": { "$ref": "#/entities/EventRsvp" },
+      "description": "Event RSVP registrations keyed by user UID."
+    }
+  }
+}

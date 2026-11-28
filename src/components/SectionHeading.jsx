@@ -9,12 +9,12 @@ export default function SectionHeading({
   return (
     <div className="mb-5 flex items-end justify-between gap-4 sm:mb-6">
       <div className="min-w-0">
-        <h2 className="text-xl font-extrabold leading-tight text-[#075c40] sm:text-2xl">
+        <h2 className="text-xl font-extrabold leading-tight text-protein-dark sm:text-2xl">
           {title}
         </h2>
 
         {subtitle && (
-          <p className="mt-1.5 text-sm leading-5 text-gray-500 sm:text-base">
+          <p className="mt-1.5 text-sm leading-5 text-protein-muted sm:text-base">
             {subtitle}
           </p>
         )}
@@ -23,7 +23,7 @@ export default function SectionHeading({
       {link && (
         <Link
           to={link}
-          className="group inline-flex shrink-0 items-center gap-1.5 rounded-full px-2 py-2 text-xs font-bold text-[#087b4b] transition hover:bg-[#eaf7ec] sm:px-3 sm:text-sm"
+          className="group inline-flex shrink-0 items-center gap-1.5 rounded-full px-2 py-2 text-xs font-bold text-protein-green transition hover:bg-protein-soft sm:px-3 sm:text-sm"
         >
           <span>View All</span>
 

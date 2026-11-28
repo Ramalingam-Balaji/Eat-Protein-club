@@ -1,8 +1,28 @@
-// src/pages/ProteinClub/data/communities.js
+import proteinClubHeroImg from "../../../assets/images/protein_club_hero_1795849946877.jpg";
+import buildMuscleBannerImg from "../../../assets/images/build_muscle_banner_1795849949393.jpg";
+import highProteinMealImg from "../../../assets/images/high_protein_meal_bowl_1795849948739.jpg";
+import familyNutritionImg from "../../../assets/images/family_nutrition_meal_1795849950003.jpg";
+import womensWellnessImg from "../../../assets/images/womens_fitness_wellness_1795849949623.jpg";
+import challengeDuoImg from "../../../assets/images/protein_challenge_duo_1795849948798.jpg";
+
+export const clubImages = {
+  hero: proteinClubHeroImg,
+  buildMuscle: buildMuscleBannerImg,
+  mealBowl: highProteinMealImg,
+  family: familyNutritionImg,
+  women: womensWellnessImg,
+  challengeDuo: challengeDuoImg,
+  eggs: "/assets/Eggs.png",
+  veg: "/assets/Veg.png",
+  dairy: "/assets/Dairy.png",
+  diet: "/assets/Diet.png",
+  appPhones: "/assets/app-phones.png",
+  eatProteinApp: "/assets/eatprotein-app.png",
+};
 
 export const communities = [
   {
-    id: 1,
+    id: "build-muscle",
     slug: "build-muscle",
     title: "Build Muscle Community",
     shortTitle: "Build Muscle",
@@ -11,12 +31,12 @@ export const communities = [
     category: "Goal Based",
     description:
       "A supportive community for muscle gain, strength, and high-protein healthy living.",
-    members: "4,820",
-    discussions: "1,240",
-    challenges: 16,
+    membersCount: 4280,
+    discussionsCount: 1240,
+    challengesCount: 16,
     started: "Jan 2026",
-    heroImage:
-      "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=700&q=80",
+    status: "active",
+    heroImage: buildMuscleBannerImg,
     benefits: [
       "High-Protein Diets",
       "Workout & Fitness Tips",
@@ -25,45 +45,24 @@ export const communities = [
       "Community Support",
     ],
     about:
-      "A space for anyone who wants to build muscle in a healthy and sustainable way with the right protein, workouts, and support.",
+      "A space for anyone who wants to build lean muscle in a healthy and sustainable way with the right protein, strength workouts, and daily habit accountability.",
     moderators: [
-      {
-        name: "Rohit S.",
-        role: "Protein Leader",
-        avatar:
-          "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80",
-      },
-      {
-        name: "Priya M.",
-        role: "Nutrition Coach",
-        avatar:
-          "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80",
-      },
-      {
-        name: "Suresh K.",
-        role: "Fitness Expert",
-        avatar:
-          "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&q=80",
-      },
+      { name: "Rohit Varma", role: "Protein Leader", initials: "RV" },
+      { name: "Priya Sharma", role: "Nutrition Coach", initials: "PS" },
+      { name: "Suresh K.", role: "Strength Expert", initials: "SK" },
     ],
     activeChallenges: [
       {
-        title: "21-Day Muscle Gain Challenge",
-        participants: "4,320 participants",
-        icon: "calendar",
-        color: "orange",
+        id: "21-day-protein-challenge",
+        title: "21-Day Build Muscle Challenge",
+        participants: "2,860 Joined",
+        startsLabel: "Starts Apr 20, 2026",
       },
       {
-        title: "Strength Building Challenge",
-        participants: "1,980 participants",
-        icon: "dumbbell",
-        color: "green",
-      },
-      {
-        title: "High-Protein Meal Challenge",
-        participants: "2,460 participants",
-        icon: "meal",
-        color: "yellow",
+        id: "strength-basics-challenge",
+        title: "7-Day Strength & Recovery",
+        participants: "1,420 Joined",
+        startsLabel: "Weekly Sprint",
       },
     ],
     goal: "Build Muscle",
@@ -71,9 +70,8 @@ export const communities = [
     stage: ["Adults", "50+ Senior"],
     location: "India",
   },
-
   {
-    id: 2,
+    id: "weight-management",
     slug: "weight-management",
     title: "Weight Management Community",
     shortTitle: "Weight Management",
@@ -82,12 +80,12 @@ export const communities = [
     category: "Goal Based",
     description:
       "A community for healthy weight management, fat loss, balanced meals, and sustainable habits.",
-    members: "3,962",
-    discussions: "985",
-    challenges: 12,
+    membersCount: 3960,
+    discussionsCount: 985,
+    challengesCount: 12,
     started: "Jan 2026",
-    heroImage:
-      "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=700&q=80",
+    status: "active",
+    heroImage: highProteinMealImg,
     benefits: [
       "Healthy Weight Habits",
       "Balanced Meal Planning",
@@ -96,45 +94,17 @@ export const communities = [
       "Community Motivation",
     ],
     about:
-      "A supportive space to build healthier habits, learn balanced nutrition, stay active and manage weight sustainably.",
+      "A supportive space to build healthier habits, increase satiety with protein-rich meals, stay active, and manage weight sustainably.",
     moderators: [
-      {
-        name: "Priya M.",
-        role: "Nutrition Coach",
-        avatar:
-          "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80",
-      },
-      {
-        name: "Rohit S.",
-        role: "Protein Leader",
-        avatar:
-          "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80",
-      },
-      {
-        name: "Anita R.",
-        role: "Community Mentor",
-        avatar:
-          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80",
-      },
+      { name: "Priya Sharma", role: "Nutrition Coach", initials: "PS" },
+      { name: "Anita R.", role: "Community Mentor", initials: "AR" },
     ],
     activeChallenges: [
       {
-        title: "21-Day Healthy Habit Challenge",
-        participants: "3,120 participants",
-        icon: "calendar",
-        color: "orange",
-      },
-      {
-        title: "Daily Movement Challenge",
-        participants: "1,560 participants",
-        icon: "dumbbell",
-        color: "green",
-      },
-      {
-        title: "Balanced Plate Challenge",
-        participants: "1,860 participants",
-        icon: "meal",
-        color: "yellow",
+        id: "21-day-protein-challenge",
+        title: "21-Day Protein Habit Challenge",
+        participants: "3,120 Joined",
+        startsLabel: "Active Now",
       },
     ],
     goal: "Lose Fat",
@@ -142,9 +112,8 @@ export const communities = [
     stage: ["Adults", "Women"],
     location: "India",
   },
-
   {
-    id: 3,
+    id: "family-nutrition",
     slug: "family-nutrition",
     title: "Family Nutrition Community",
     shortTitle: "Family Nutrition",
@@ -153,12 +122,12 @@ export const communities = [
     category: "Life Stage",
     description:
       "Better protein, balanced meals and healthy habits for the whole family.",
-    members: "3,410",
-    discussions: "860",
-    challenges: 10,
+    membersCount: 2760,
+    discussionsCount: 860,
+    challengesCount: 10,
     started: "Jan 2026",
-    heroImage:
-      "https://images.unsplash.com/photo-1511895426328-dc8714193e1d?auto=format&fit=crop&w=700&q=80",
+    status: "active",
+    heroImage: familyNutritionImg,
     benefits: [
       "Family Meal Ideas",
       "Protein for All Ages",
@@ -167,45 +136,17 @@ export const communities = [
       "Family Challenges",
     ],
     about:
-      "A community for families to share meal ideas, discover nutritious food and build healthy habits together.",
+      "A community for families to share balanced meal ideas, discover everyday protein foods, and build healthy habits together.",
     moderators: [
-      {
-        name: "Priya M.",
-        role: "Nutrition Coach",
-        avatar:
-          "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80",
-      },
-      {
-        name: "Suresh K.",
-        role: "Family Wellness Mentor",
-        avatar:
-          "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&q=80",
-      },
-      {
-        name: "Rohit S.",
-        role: "Protein Leader",
-        avatar:
-          "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80",
-      },
+      { name: "Suresh K.", role: "Family Wellness Mentor", initials: "SK" },
+      { name: "Priya Sharma", role: "Nutrition Coach", initials: "PS" },
     ],
     activeChallenges: [
       {
-        title: "Family Healthy Breakfast Challenge",
-        participants: "2,320 participants",
-        icon: "calendar",
-        color: "orange",
-      },
-      {
-        title: "Eat Together Challenge",
-        participants: "1,480 participants",
-        icon: "meal",
-        color: "green",
-      },
-      {
-        title: "Healthy Family Habits",
-        participants: "1,940 participants",
-        icon: "dumbbell",
-        color: "yellow",
+        id: "21-day-protein-challenge",
+        title: "Family Breakfast Protein Challenge",
+        participants: "2,320 Joined",
+        startsLabel: "Active Now",
       },
     ],
     goal: "Family Nutrition",
@@ -213,9 +154,8 @@ export const communities = [
     stage: ["Adults", "Kids (4–12 yrs)", "Women"],
     location: "India",
   },
-
   {
-    id: 4,
+    id: "women-protein",
     slug: "women-protein",
     title: "Women's Protein Community",
     shortTitle: "Women's Protein",
@@ -224,12 +164,12 @@ export const communities = [
     category: "Life Stage",
     description:
       "Nutrition for women's health, fitness, balanced diets and everyday wellness.",
-    members: "2,608",
-    discussions: "720",
-    challenges: 8,
+    membersCount: 3120,
+    discussionsCount: 720,
+    challengesCount: 8,
     started: "Jan 2026",
-    heroImage:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=700&q=80",
+    status: "active",
+    heroImage: womensWellnessImg,
     benefits: [
       "Nutrition & Wellness",
       "Healthy Protein Choices",
@@ -238,17 +178,25 @@ export const communities = [
       "Supportive Community",
     ],
     about:
-      "A supportive space for women to share healthy habits, fitness journeys and everyday nutrition ideas.",
-    moderators: [],
-    activeChallenges: [],
+      "A supportive space for women to share healthy habits, strength training journeys, energy optimization, and everyday nutrition ideas.",
+    moderators: [
+      { name: "Sita Reddy", role: "Women's Wellness Lead", initials: "SR" },
+    ],
+    activeChallenges: [
+      {
+        id: "21-day-protein-challenge",
+        title: "21-Day Women's Wellness Sprint",
+        participants: "1,890 Joined",
+        startsLabel: "Active Now",
+      },
+    ],
     goal: "Improve Health",
     diet: ["Any", "Vegetarian", "Vegan"],
     stage: ["Women", "Pregnant / Feeding"],
     location: "India",
   },
-
   {
-    id: 5,
+    id: "kids-nutrition",
     slug: "kids-nutrition",
     title: "Kids Nutrition Community",
     shortTitle: "Kids Nutrition",
@@ -257,64 +205,32 @@ export const communities = [
     category: "Life Stage",
     description:
       "Protein-rich foods, healthy growth and nutritious meal ideas for children.",
-    members: "1,980",
-    discussions: "510",
-    challenges: 7,
+    membersCount: 1840,
+    discussionsCount: 510,
+    challengesCount: 7,
     started: "Jan 2026",
-    heroImage:
-      "https://images.unsplash.com/photo-1503919005314-30d3b8d2b8d3?auto=format&fit=crop&w=700&q=80",
+    status: "active",
+    heroImage: familyNutritionImg,
     benefits: [
       "Kids' Meal Ideas",
       "Healthy Growth",
       "Protein Food Guide",
-      "Family Nutrition Tips",
+      "Lunchbox Inspiration",
       "Healthy Eating Habits",
     ],
     about:
-      "Parents and families share practical ideas for nutritious meals and healthy food habits for kids.",
-    moderators: [],
+      "Parents and families share practical, kid-approved recipes for nutritious meals and healthy growth habits.",
+    moderators: [
+      { name: "Lakshmi N.", role: "Parent Leader", initials: "LN" },
+    ],
     activeChallenges: [],
     goal: "Family Nutrition",
     diet: ["Any", "Vegetarian", "Egg & Dairy"],
     stage: ["Kids (4–12 yrs)"],
     location: "India",
   },
-
   {
-    id: 6,
-    slug: "healthy-living-50",
-    title: "50+ Healthy Living Community",
-    shortTitle: "50+ Healthy Living",
-    badge: "EatProtein Official",
-    official: true,
-    category: "Life Stage",
-    description:
-      "Stay fit, strong and active with the right protein and healthy habits.",
-    members: "1,756",
-    discussions: "480",
-    challenges: 6,
-    started: "Jan 2026",
-    heroImage:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=80",
-    benefits: [
-      "Healthy Aging",
-      "Strength & Mobility",
-      "Everyday Nutrition",
-      "Protein-Rich Meals",
-      "Community Support",
-    ],
-    about:
-      "A friendly community focused on staying active, sharing nutrition tips and enjoying healthy living.",
-    moderators: [],
-    activeChallenges: [],
-    goal: "Stay Active",
-    diet: ["Any", "Vegetarian", "Egg & Dairy"],
-    stage: ["50+ Senior"],
-    location: "India",
-  },
-
-  {
-    id: 7,
+    id: "vegetarian-protein",
     slug: "vegetarian-protein",
     title: "Vegetarian Protein Community",
     shortTitle: "Vegetarian Protein",
@@ -323,31 +239,32 @@ export const communities = [
     category: "Diet Type",
     description:
       "High-protein vegetarian foods, recipes and meal ideas for everyday nutrition.",
-    members: "2,890",
-    discussions: "740",
-    challenges: 9,
+    membersCount: 1980,
+    discussionsCount: 740,
+    challengesCount: 9,
     started: "Jan 2026",
-    heroImage:
-      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=700&q=80",
+    status: "active",
+    heroImage: highProteinMealImg,
     benefits: [
       "Vegetarian Protein Foods",
-      "Easy Recipes",
-      "Meal Combinations",
+      "Easy Paneer & Lentil Recipes",
+      "Complete Amino Combinations",
       "Nutrition Tips",
       "Food Challenges",
     ],
     about:
-      "Discover vegetarian protein sources, share recipes and make nutritious vegetarian meals every day.",
-    moderators: [],
+      "Discover vegetarian protein sources like paneer, tofu, lentils, sprouts, and Greek yogurt to easily meet your daily protein goal.",
+    moderators: [
+      { name: "Anjali M.", role: "Veg Nutrition Lead", initials: "AM" },
+    ],
     activeChallenges: [],
     goal: "Eat More Protein",
     diet: ["Vegetarian", "Vegan"],
     stage: ["Adults", "Women", "Kids (4–12 yrs)"],
     location: "India",
   },
-
   {
-    id: 8,
+    id: "egg-dairy",
     slug: "egg-dairy",
     title: "Egg & Dairy Community",
     shortTitle: "Egg & Dairy",
@@ -355,32 +272,67 @@ export const communities = [
     official: true,
     category: "Diet Type",
     description:
-      "Daily protein from eggs, milk and dairy for a healthier lifestyle.",
-    members: "2,430",
-    discussions: "680",
-    challenges: 8,
+      "Daily protein from eggs, milk, curd, and paneer for a healthier lifestyle.",
+    membersCount: 2140,
+    discussionsCount: 680,
+    challengesCount: 8,
     started: "Jan 2026",
-    heroImage:
-      "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=700&q=80",
+    status: "active",
+    heroImage: highProteinMealImg,
     benefits: [
       "Egg-Based Meals",
       "Milk & Dairy Protein",
-      "Quick Food Ideas",
+      "Quick 10-Min Recipes",
       "Balanced Nutrition",
       "Protein Challenges",
     ],
     about:
-      "Share recipes, meal ideas and tips using eggs, milk and dairy foods as part of a balanced diet.",
-    moderators: [],
+      "Share recipes, high-protein breakfast ideas, and everyday habits using eggs, curd, paneer, and dairy.",
+    moderators: [
+      { name: "Kiran Kumar", role: "Protein Leader", initials: "KK" },
+    ],
     activeChallenges: [],
     goal: "Eat More Protein",
     diet: ["Egg & Dairy", "Vegetarian"],
     stage: ["Adults", "Kids (4–12 yrs)"],
     location: "India",
   },
-
   {
-    id: 9,
+    id: "healthy-living-50",
+    slug: "healthy-living-50",
+    title: "50+ Healthy Living Community",
+    shortTitle: "50+ Healthy Living",
+    badge: "EatProtein Official",
+    official: true,
+    category: "Life Stage",
+    description:
+      "Stay fit, strong and active with the right protein and healthy habits.",
+    membersCount: 1620,
+    discussionsCount: 480,
+    challengesCount: 6,
+    started: "Jan 2026",
+    status: "active",
+    heroImage: womensWellnessImg,
+    benefits: [
+      "Healthy Aging",
+      "Strength & Mobility",
+      "Everyday Nutrition",
+      "Joint-Friendly Habits",
+      "Community Support",
+    ],
+    about:
+      "A friendly community focused on preserving muscle strength, energy, and mobility after 50.",
+    moderators: [
+      { name: "Ramesh Rao", role: "Senior Wellness Mentor", initials: "RR" },
+    ],
+    activeChallenges: [],
+    goal: "Stay Active",
+    diet: ["Any", "Vegetarian", "Egg & Dairy"],
+    stage: ["50+ Senior"],
+    location: "India",
+  },
+  {
+    id: "vizag-protein",
     slug: "vizag-protein",
     title: "Vizag Protein Community",
     shortTitle: "Vizag Protein",
@@ -388,27 +340,236 @@ export const communities = [
     official: false,
     category: "Local",
     description:
-      "Local community for Vizag meetups, events, protein habits and challenges.",
-    members: "2,540",
-    discussions: "620",
-    challenges: 5,
+      "Local community for Visakhapatnam meetups, events, protein habits and challenges.",
+    membersCount: 2540,
+    discussionsCount: 620,
+    challengesCount: 5,
     started: "Jan 2026",
-    heroImage:
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=700&q=80",
+    status: "active",
+    heroImage: proteinClubHeroImg,
     benefits: [
-      "Local Meetups",
+      "Beach Road Morning Walk Meetups",
       "Fitness Connections",
-      "Food Spot Discovery",
-      "Local Challenges",
+      "Local EatProtein Partner Discovery",
+      "City Challenges",
       "Community Support",
     ],
     about:
-      "Connect with people around Vizag who share fitness, nutrition, protein and healthy lifestyle goals.",
-    moderators: [],
+      "Connect with people across Visakhapatnam who share fitness, nutrition, protein, and healthy lifestyle goals.",
+    moderators: [
+      { name: "Manoj Kumar", role: "City Champion", initials: "MK" },
+    ],
     activeChallenges: [],
     goal: "Stay Active",
     diet: ["Any"],
     stage: ["Adults", "Women", "50+ Senior"],
     location: "Vizag",
   },
+];
+
+export const defaultChallenges = [
+  {
+    id: "21-day-protein-challenge",
+    title: "21-Day Protein Challenge",
+    subtitle: "Build a consistent protein habit for a stronger, fitter and healthier you.",
+    communityId: "build-muscle",
+    durationDays: 21,
+    goal: "Build Muscle",
+    participantsCount: 12480,
+    rewardPoints: 100,
+    rewardCoins: 50,
+    status: "active",
+  },
+  {
+    id: "strength-basics-challenge",
+    title: "Strength Basics (7 Days)",
+    subtitle: "Pair 90g+ daily protein intake with 3 progressive resistance workouts.",
+    communityId: "build-muscle",
+    durationDays: 7,
+    goal: "Build Muscle",
+    participantsCount: 3840,
+    rewardPoints: 100,
+    rewardCoins: 40,
+    status: "active",
+  },
+];
+
+export const defaultChallengeDays = [
+  { day: 1, title: "Know Your Protein Need", task: "Calculate your personalized daily protein requirement using the Protein Calculator.", points: 100, checklist: ["Set your primary goal", "Check your daily gram target", "Share your target with the community"] },
+  { day: 2, title: "Protein-Rich Breakfast", task: "Start your morning with 25g+ protein from eggs, Greek yogurt, paneer, or sprouts.", points: 100, checklist: ["Include 25g+ protein in breakfast", "Log your morning meal", "Avoid sugary breakfast drinks"] },
+  { day: 3, title: "Add Protein to Every Meal", task: "Balance breakfast, lunch, snack, and dinner so each contains a whole protein source.", points: 100, checklist: ["Add dal/paneer/chicken/eggs to lunch", "Add protein-rich dinner", "Hit 80% of daily target"] },
+  { day: 4, title: "Hydration & Protein", task: "Drink 2.5–3 liters of water alongside your daily protein meals for clean digestion.", points: 100, checklist: ["Drink 8+ glasses of water", "Hit your daily protein goal", "Log today's meals"] },
+  { day: 5, title: "Strength Basics", task: "Complete 30 minutes of resistance exercise, bodyweight training, or brisk incline walking.", points: 100, checklist: ["30 mins strength/resistance work", "Post-workout protein within 2 hours", "Check in with your community"] },
+  { day: 6, title: "Sleep & Recovery", task: "Prioritize 7–8 hours of quality sleep and include slow-digesting protein at dinner.", points: 100, checklist: ["Balanced high-protein dinner", "Screen-free wind down", "Log full-day intake"] },
+  { day: 7, title: "Track Your Protein", task: "Log your total protein intake for today (as per your daily target) and stay consistent.", points: 100, checklist: ["Eat protein-rich meals as per your goal", "Log your total protein intake in EatProtein", "Share a quick update in your community (optional)"] },
+  { day: 8, title: "Protein Snacks", task: "Swap refined snacks for roasted chana, almonds, boiled eggs, or buttermilk.", points: 100, checklist: ["15g+ high-protein evening snack", "Zero fried snacks", "Log daily total"] },
+  { day: 9, title: "Plant vs Animal Protein", task: "Explore combining complementary plant proteins or adding lean dairy/egg boosts.", points: 100, checklist: ["Combine grain + legume or dairy", "Hit 100% protein target", "Save a recipe in community"] },
+  { day: 10, title: "Protein for Weight Goals", task: "Distribute protein evenly across meals to keep hunger stable all day.", points: 100, checklist: ["Eat 30g protein before 1 PM", "Log afternoon snack", "Stay within healthy portions"] },
+  { day: 11, title: "Home Protein Meals", task: "Cook or assemble a quick 15-minute home protein bowl.", points: 100, checklist: ["Prepare a home high-protein bowl", "Share meal tip in feed", "Hit daily target"] },
+  { day: 12, title: "Active Movement", task: "Reach 8,000+ steps alongside consistent meal timing.", points: 100, checklist: ["8,000+ steps completed", "Hit daily protein target", "Hydrate well"] },
+  { day: 13, title: "Muscle Recovery", task: "Focus on leucine-rich protein sources after physical activity.", points: 100, checklist: ["Post-activity protein meal", "Gentle stretching", "Log daily progress"] },
+  { day: 14, title: "Protein & Immunity", task: "Pair your protein meals with seasonal vegetables and vitamin-rich foods.", points: 500, checklist: ["Colorful veggie + protein plate", "Celebrate 14-day milestone!", "Earn +500 Streak Bonus"] },
+  { day: 15, title: "Midday Energy Check", task: "Avoid afternoon energy crashes with a protein + fiber lunch.", points: 100, checklist: ["Balanced lunch", "15g protein snack", "Log meals"] },
+  { day: 16, title: "Weekend Meal Prep", task: "Prep boiled eggs, soaked sprouts, or marinated paneer for busy days.", points: 100, checklist: ["Prep 2 protein staples", "Log daily intake", "Encourage a member"] },
+  { day: 17, title: "Mindful Portions", task: "Weigh or measure one protein staple today to calibrate your portions.", points: 100, checklist: ["Measure paneer/dal/chicken serving", "Hit target within 5g", "Track intake"] },
+  { day: 18, title: "Family Protein Meal", task: "Share one high-protein meal recipe with your family or household.", points: 100, checklist: ["Cook/share a family protein meal", "Post feedback", "Track today"] },
+  { day: 19, title: "Consistency Under Pressure", task: "Hit your protein target even on a busy workday schedule.", points: 100, checklist: ["Pack a portable protein snack", "Complete target", "Log intake"] },
+  { day: 20, title: "Reflection & Progress", task: "Compare your energy levels and consistency since Day 1.", points: 100, checklist: ["Review your 20-day streak", "Share a win with community", "Log intake"] },
+  { day: 21, title: "Become a Protein Champion", task: "Complete Day 21, lock in your habit, and claim your Protein Champion badge!", points: 500, checklist: ["Hit 100% of daily protein goal", "Mark final Day 21 complete", "Claim Champion Recognition"] },
+];
+
+export const defaultRewards = [
+  {
+    id: "reward-pack-100",
+    title: "₹100 Off on EatProtein Packs",
+    description: "Redeem on EatProtein high-protein meal boxes and combo packs.",
+    category: "Product Discount",
+    coinsCost: 500,
+    codePrefix: "EP100",
+    status: "active",
+  },
+  {
+    id: "reward-free-delivery",
+    title: "Free Delivery Pass (3 Orders)",
+    description: "Zero delivery fee across your next three EatProtein partner orders.",
+    category: "Delivery Benefit",
+    coinsCost: 300,
+    codePrefix: "EPFREE",
+    status: "active",
+  },
+  {
+    id: "reward-starter-kit",
+    title: "High-Protein Starter Box Voucher",
+    description: "Exclusive member voucher for a curated EatProtein starter taster box.",
+    category: "Protein Product",
+    coinsCost: 1000,
+    codePrefix: "EPBOX",
+    status: "active",
+  },
+  {
+    id: "reward-partner-20",
+    title: "20% Off Partner Kitchen Meal",
+    description: "Save 20% at verified EatProtein Healthy Food Stores near you.",
+    category: "Special Offer",
+    coinsCost: 750,
+    codePrefix: "EPK20",
+    status: "active",
+  },
+];
+
+export const defaultEvents = [
+  {
+    id: "event-hit-daily-goal",
+    title: "Live: How to Hit Your Daily Protein Goal",
+    communityId: "build-muscle",
+    communityTitle: "Build Muscle Community",
+    hostName: "Priya Sharma, Nutrition Coach",
+    dateLabel: "Nov 28, 2026",
+    timeLabel: "7:00 PM – 8:00 PM IST",
+    type: "Webinar",
+    description: "Practical meal templates for hitting 90g–120g protein cleanly using everyday Indian foods.",
+    rsvpCount: 342,
+    status: "upcoming",
+  },
+  {
+    id: "event-muscle-workout-plan",
+    title: "Build Muscle — 4 Week Workout & Protein Plan",
+    communityId: "build-muscle",
+    communityTitle: "Build Muscle Community",
+    hostName: "Rohit Varma, Protein Leader",
+    dateLabel: "Dec 05, 2026",
+    timeLabel: "6:00 PM – 7:00 PM IST",
+    type: "Workshop",
+    description: "How to structure push/pull/legs splits alongside protein timing and recovery.",
+    rsvpCount: 218,
+    status: "upcoming",
+  },
+  {
+    id: "event-vizag-beach-meetup",
+    title: "Vizag Beach Road Protein Walk & Meetup",
+    communityId: "vizag-protein",
+    communityTitle: "Vizag Protein Community",
+    hostName: "Manoj Kumar, City Champion",
+    dateLabel: "Dec 12, 2026",
+    timeLabel: "6:30 AM – 8:00 AM IST",
+    type: "Meetup",
+    description: "Morning 5K community walk followed by healthy protein breakfast tasting.",
+    rsvpCount: 164,
+    status: "upcoming",
+  },
+];
+
+export const defaultChampions = [
+  { uid: "champ-priya", displayName: "Priya Sharma", location: "Hyderabad", points: 2980, streak: 21, rankBadge: "Protein Champion" },
+  { uid: "champ-rohit", displayName: "Rohit Varma", location: "Visakhapatnam", points: 2760, streak: 21, rankBadge: "Protein Leader" },
+  { uid: "champ-sita", displayName: "Sita Reddy", location: "Bengaluru", points: 2450, streak: 20, rankBadge: "Senior Leader" },
+  { uid: "champ-arjun", displayName: "Arjun Mehta", location: "Mumbai", points: 2180, streak: 19, rankBadge: "Top Contributor" },
+  { uid: "champ-kiran", displayName: "Kiran Kumar", location: "Chennai", points: 1960, streak: 19, rankBadge: "Challenger" },
+  { uid: "champ-anjali", displayName: "Anjali M.", location: "Pune", points: 1520, streak: 14, rankBadge: "Member" },
+];
+
+export const defaultResources = [
+  {
+    id: "res-100g-veg-guide",
+    title: "How to Hit 100g Protein on a Vegetarian Diet",
+    category: "Vegetarian Guide",
+    readTime: "4 min read",
+    proteinHighlight: "100g / day template",
+    summary: "Combine paneer (18g/100g), Greek yogurt (10g/100g), moong chilla, soya chunks, and roasted chana without relying solely on shakes.",
+    items: [
+      "Morning: 200g Greek yogurt + 2 tbsp chia/pumpkin seeds (22g)",
+      "Lunch: 120g grilled paneer + 1 bowl thick moong dal + roti (34g)",
+      "Snack: Roasted chana + 300ml buttermilk (16g)",
+      "Dinner: 50g soya chunks pulao or tofu stir-fry (28g)",
+    ],
+  },
+  {
+    id: "res-breakfast-30g",
+    title: "5 Quick 10-Minute High-Protein Breakfasts (25g–32g)",
+    category: "Recipes",
+    readTime: "3 min read",
+    proteinHighlight: "25g–32g / meal",
+    summary: "Start your day strong to prevent mid-morning cravings and hit your daily protein requirement effortlessly.",
+    items: [
+      "3 Whole Eggs Omelette + 100ml Greek Yogurt (30g protein)",
+      "Besan Paneer Chilla (2 pcs) + Mint Curd (26g protein)",
+      "Overnight Oats with Milk, Whey/Soy Isolate & Almonds (32g protein)",
+      "Tofu Bhurji Toast with 2 Multigrain Slices (25g protein)",
+    ],
+  },
+  {
+    id: "res-weight-loss-protein",
+    title: "Protein & Fat Loss: Preserving Lean Muscle",
+    category: "Nutrition Science",
+    readTime: "5 min read",
+    proteinHighlight: "1.4g–1.6g / kg",
+    summary: "Why higher protein intake increases satiety, protects lean mass during a calorie deficit, and boosts thermic effect.",
+    items: [
+      "Aim for 25g–35g protein per main meal",
+      "Pair lean protein with high-volume non-starchy vegetables",
+      "Include 2–3 resistance workouts per week",
+    ],
+  },
+  {
+    id: "res-family-kids",
+    title: "Everyday Protein Swaps for Kids & Seniors",
+    category: "Family & 50+",
+    readTime: "4 min read",
+    proteinHighlight: "All Ages",
+    summary: "Simple, digestively gentle ways to upgrade traditional Indian family meals with extra protein.",
+    items: [
+      "Add roasted besan or sattu to paratha dough",
+      "Swap plain rice snacks for boiled egg/sprout chaat",
+      "Include thick curd or paneer cubes in evening tiffins",
+    ],
+  },
+];
+
+export const pointScoringRules = [
+  { action: "Complete daily challenge task", points: "+100 pts" },
+  { action: "7-day / 14-day challenge streak", points: "+500 pts" },
+  { action: "Join a challenge", points: "+100 pts" },
+  { action: "Helpful community post", points: "+50 pts" },
+  { action: "Log daily protein intake", points: "+20 pts" },
+  { action: "Helpful community comment", points: "+20 pts" },
 ];

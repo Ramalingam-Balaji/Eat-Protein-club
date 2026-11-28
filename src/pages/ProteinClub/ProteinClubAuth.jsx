@@ -1,560 +1,695 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  Camera,
-  Plus,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+} from "firebase/auth";
+import {
   ArrowRight,
-  Users,
-  Target,
-  ChartNoAxesColumnIncreasing,
-  Gift,
-  LockKeyhole,
-  ShieldCheck,
-  ArrowLeft,
+  Camera,
   CheckCircle2,
-  LoaderCircle,
+  Mail,
+  MapPin,
+  Phone,
+  ShieldCheck,
+  UserRound,
 } from "lucide-react";
+import { auth } from "../../firebase";
+import { useProteinClubAuth } from "../../context/ProteinClubAuthContext";
+import { clubImages } from "./data/communities";
 
-const inputClass =
-  "w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-green-600 focus:ring-2 focus:ring-green-100";
+const avatarPresets = [
+  { label: "Fitness Member", url: clubImages.hero },
+  { label: "Build Muscle", url: clubImages.buildMuscle },
+  { label: "Meal Prep", url: clubImages.mealBowl },
+  { label: "Wellness", url: clubImages.women },
+];
 
-const labelClass = "mb-1.5 block text-sm font-bold text-[#10243B]";
+const cities = [
+  "Visakhapatnam, AP",
+  "Hyderabad, TS",
+  "Bengaluru, KA",
+  "Chennai, TN",
+  "Vijayawada, AP",
+  "Mumbai, MH",
+  "Delhi NCR",
+  "Pune, MH",
+  "Coimbatore, TN",
+  "Other",
+];
+
+const dietOptions = ["Veg", "Non-Veg", "Eggetarian", "Vegan"];
 
 export default function ProteinClubAuth() {
-  const [mode, setMode] = useState("register");
-  const [photo, setPhoto] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const {
+    user,
+    profile,
+    privateInfo,
+    signInWithGoogle,
+    saveProfile,
+    showToast,
+  } = useProteinClubAuth();
 
-  // Registration states
-  const [form, setForm] = useState({
-    fullName: "",
-    mobile: "",
-    email: "",
-    age: "",
-    gender: "",
-    location: "",
-  });
+  const [authTab, setAuthTab] = useState("google");
+  const [phoneInput, setPhoneInput] = useState("");
+  const [otpInput, setOtpInput] = useState("");
+  const [confirmationResult, setConfirmationResult] = useState(null);
+  const [authBusy, setAuthBusy] = useState(false);
+  const [saveBusy, setSaveBusy] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [phoneSetupNeeded, setPhoneSetupNeeded] = useState(false);
 
-  // Login states
-  const [loginContact, setLoginContact] = useState("");
-  const [otp, setOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-
-  const [loading, setLoading] = useState(false);
-
-  const handleFormChange = (e) => {
-    setForm((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+  const [formEdits, setFormEdits] = useState({});
+  const setForm = (updater) => {
+    setFormEdits((prev) => {
+      const current = {
+        fullName:
+          prev.fullName ??
+          profile?.displayName ??
+          privateInfo?.fullName ??
+          user?.displayName ??
+          "",
+        mobile: prev.mobile ?? privateInfo?.mobile ?? user?.phoneNumber ?? "",
+        email: prev.email ?? privateInfo?.email ?? user?.email ?? "",
+        age: String(prev.age ?? privateInfo?.age ?? "30"),
+        gender: prev.gender ?? privateInfo?.gender ?? "Male",
+        location: prev.location ?? profile?.location ?? "Visakhapatnam, AP",
+        dietPreference: prev.dietPreference ?? profile?.dietPreference ?? "Non-Veg",
+        photoURL: prev.photoURL ?? profile?.photoURL ?? user?.photoURL ?? clubImages.hero,
+      };
+      return typeof updater === "function" ? updater(current) : { ...current, ...updater };
+    });
   };
 
-  const handlePhotoUpload = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Please select an image under 5 MB.");
-      return;
-    }
-
-    if (!file.type.startsWith("image/")) {
-      alert("Please upload an image file.");
-      return;
-    }
-
-    const previewUrl = URL.createObjectURL(file);
-    setPhoto(previewUrl);
+  const form = {
+    fullName:
+      formEdits.fullName ??
+      profile?.displayName ??
+      privateInfo?.fullName ??
+      user?.displayName ??
+      "",
+    mobile: formEdits.mobile ?? privateInfo?.mobile ?? user?.phoneNumber ?? "",
+    email: formEdits.email ?? privateInfo?.email ?? user?.email ?? "",
+    age: String(formEdits.age ?? privateInfo?.age ?? "30"),
+    gender: formEdits.gender ?? privateInfo?.gender ?? "Male",
+    location: formEdits.location ?? profile?.location ?? "Visakhapatnam, AP",
+    dietPreference: formEdits.dietPreference ?? profile?.dietPreference ?? "Non-Veg",
+    photoURL: formEdits.photoURL ?? profile?.photoURL ?? user?.photoURL ?? clubImages.hero,
   };
 
-  const handleRegister = (e) => {
-  e.preventDefault();
+  const recaptchaRef = useRef(null);
 
-  if (!form.gender) {
-    alert("Please select your gender.");
-    return;
-  }
+  useEffect(() => {
+    return () => {
+      try {
+        recaptchaRef.current?.clear();
+      } catch {
+        // ignore cleanup error
+      }
+    };
+  }, []);
 
-  alert("Registration UI is ready. Authentication will be connected later.");
-};
+  const resetRecaptcha = () => {
+    try {
+      recaptchaRef.current?.clear();
+    } catch {
+      // ignore cleanup error
+    }
+    recaptchaRef.current = null;
+    const container = document.getElementById("club-recaptcha-container");
+    if (container) {
+      container.innerHTML = "";
+    }
+  };
 
-  const handleSendOTP = (e) => {
+  const handleGoogleSignIn = async () => {
+    setErrorMsg("");
+    setPhoneSetupNeeded(false);
+    setAuthBusy(true);
+    try {
+      const { hasProfile } = await signInWithGoogle();
+      showToast("Signed in with Google! Complete or confirm your profile below.");
+      if (hasProfile && location.state?.from?.pathname) {
+        navigate(location.state.from.pathname, { replace: true });
+      }
+    } catch (err) {
+      setErrorMsg(
+        err?.message || "Could not sign in with Google. Please allow popups and try again."
+      );
+    } finally {
+      setAuthBusy(false);
+    }
+  };
+
+  const handleSendPhoneOtp = async (e) => {
     e.preventDefault();
-
-    if (!loginContact.trim()) {
-      alert("Please enter your mobile number or email.");
+    setErrorMsg("");
+    setPhoneSetupNeeded(false);
+    if (!/^[6-9]\d{9}$/.test(phoneInput.trim())) {
+      setErrorMsg("Enter a valid 10-digit Indian mobile number.");
       return;
     }
-
-    // UI-only OTP flow
-    setLoading(true);
-
-    setTimeout(() => {
-      setLoading(false);
-      setOtpSent(true);
-    }, 500);
+    setAuthBusy(true);
+    try {
+      const container = document.getElementById("club-recaptcha-container");
+      if (!recaptchaRef.current && container) {
+        recaptchaRef.current = new RecaptchaVerifier(auth, container, {
+          size: "invisible",
+        });
+      }
+      const res = await signInWithPhoneNumber(
+        auth,
+        `+91${phoneInput.trim()}`,
+        recaptchaRef.current
+      );
+      setConfirmationResult(res);
+      showToast("OTP sent to +91 " + phoneInput.trim());
+    } catch (err) {
+      resetRecaptcha();
+      const code = err?.code || "";
+      if (
+        code === "auth/operation-not-allowed" ||
+        code === "auth/captcha-check-failed" ||
+        code === "auth/invalid-app-credential" ||
+        code === "auth/unauthorized-domain"
+      ) {
+        setPhoneSetupNeeded(true);
+        setErrorMsg(
+          "SMS Phone OTP requires enabling the Phone Sign-in provider and authorizing this domain in Firebase Console. You can continue immediately with Instant Google Sign-In."
+        );
+      } else if (code === "auth/too-many-requests") {
+        setErrorMsg("Too many OTP attempts. Please wait a bit or use Instant Google Sign-In.");
+      } else {
+        setErrorMsg(err?.message || "Unable to send OTP right now.");
+      }
+    } finally {
+      setAuthBusy(false);
+    }
   };
 
-  const handleVerifyOTP = (e) => {
+  const handleVerifyOtp = async (e) => {
     e.preventDefault();
+    setErrorMsg("");
+    if (!/^\d{6}$/.test(otpInput.trim())) {
+      setErrorMsg("Enter the 6-digit OTP.");
+      return;
+    }
+    setAuthBusy(true);
+    try {
+      await confirmationResult.confirm(otpInput.trim());
+      setForm((prev) => ({ ...prev, mobile: `+91${phoneInput.trim()}` }));
+      showToast("Mobile number verified! Now complete your profile.");
+    } catch (err) {
+      setErrorMsg(err?.message || "Invalid OTP code.");
+    } finally {
+      setAuthBusy(false);
+    }
+  };
 
-    if (otp.length !== 6) {
-      alert("Please enter a valid 6-digit OTP.");
+  const handleSaveProfile = async (e) => {
+    e.preventDefault();
+    setErrorMsg("");
+    if (!user) {
+      setErrorMsg("Please sign in with Google or Mobile OTP first.");
+      return;
+    }
+    if (!form.fullName.trim()) {
+      setErrorMsg("Please enter your full name.");
       return;
     }
 
-    // UI-only verification
-    alert("OTP UI is ready. Authentication will be connected later.");
+    setSaveBusy(true);
+    try {
+      await saveProfile({
+        fullName: form.fullName.trim(),
+        mobile: form.mobile.trim(),
+        email: form.email.trim(),
+        age: Number(form.age) || 30,
+        gender: form.gender,
+        location: form.location,
+        dietPreference: form.dietPreference,
+        photoURL: form.photoURL,
+        goal: profile?.goal || "Build Muscle",
+        dailyProteinTarget: profile?.dailyProteinTarget || 90,
+      });
+      showToast("Profile saved! Now choose your protein goal.");
+      navigate("/protein-club/goal");
+    } catch (err) {
+      setErrorMsg(err?.message || "Could not save profile.");
+    } finally {
+      setSaveBusy(false);
+    }
   };
 
-  const switchMode = (nextMode) => {
-    setMode(nextMode);
-    setOtpSent(false);
-    setOtp("");
-    setLoginContact("");
-  };
+  const currentStep = user ? 2 : 1;
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-white">
-      {/* Decorative background */}
-      <div className="pointer-events-none absolute left-0 top-20 h-60 w-60 rounded-full bg-green-100/50 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 right-0 h-72 w-72 rounded-full bg-lime-100/50 blur-3xl" />
-
-      <div className="relative mx-auto grid min-h-[calc(100vh-70px)] max-w-[1600px] grid-cols-1 items-center gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[280px_minmax(0,880px)_250px] lg:gap-5 lg:px-8 lg:py-8 xl:gap-8">
-        {/* ==================================================
-            LEFT INFO PANEL
-        =================================================== */}
-        <aside className="hidden lg:block">
-          <div className="max-w-[270px]">
-            <h1 className="text-4xl font-black leading-tight tracking-tight text-[#10243B] xl:text-[43px]">
-              EatProtein
-              <span className="block text-green-800">Protein Club</span>
-            </h1>
-
-            <p className="mt-4 text-xl font-medium leading-snug text-[#10243B]">
-              A community for a stronger, healthier life and protein-rich life.
-            </p>
-
-            <div className="mt-7 space-y-4">
-              {[
-                {
-                  icon: Users,
-                  text: "Join like-minded health champions",
-                },
-                {
-                  icon: Target,
-                  text: "Take challenges & build healthy habits",
-                },
-                {
-                  icon: ChartNoAxesColumnIncreasing,
-                  text: "Track your progress",
-                },
-                {
-                  icon: Gift,
-                  text: "Earn rewards & get exclusive benefits",
-                },
-              ].map((item) => {
-                const Icon = item.icon;
-
-                return (
-                  <div key={item.text} className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-green-50">
-                      <Icon className="h-6 w-6 text-green-800" />
-                    </div>
-
-                    <p className="text-sm font-semibold leading-relaxed text-gray-800">
-                      {item.text}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </aside>
-
-        {/* ==================================================
-            MAIN AUTH CARD
-        =================================================== */}
-        <section className="w-full min-w-0">
-          <div className="mx-auto w-full max-w-[880px] rounded-[26px] border border-gray-100 bg-white/95 p-4 shadow-[0_12px_45px_rgba(15,23,42,0.12)] sm:p-6 md:p-8 lg:p-9">
-            {/* Mobile branding */}
-            <div className="mb-5 text-center lg:hidden">
-              <h1 className="text-2xl font-black text-[#10243B]">
-                EatProtein <span className="text-green-700">Protein Club</span>
-              </h1>
-              <p className="mt-1 text-sm text-gray-600">
-                Your journey to a healthier lifestyle
-              </p>
-            </div>
-
-            {/* Card heading */}
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center gap-2">
-                <span className="text-2xl font-black tracking-tight text-[#10243B] sm:text-3xl md:text-4xl">
-                  {mode === "register" ? "Join Protein Club" : "Welcome Back"}
-                </span>
+    <div className="min-h-screen bg-protein-surface px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl rounded-3xl border border-green-100 bg-white p-6 shadow-sm sm:p-8 lg:p-10">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+          {/* Left Onboarding Stepper */}
+          <div className="flex flex-col justify-between rounded-2xl bg-protein-surface p-6 lg:col-span-4">
+            <div>
+              <div className="flex items-center gap-2.5 text-protein-dark">
+                <ShieldCheck className="text-protein-green" size={24} />
+                <span className="text-lg font-extrabold">EatProtein Account</span>
               </div>
-
-              <p className="mt-2 text-sm text-gray-600 sm:text-base">
-                {mode === "register"
-                  ? "Create your profile to personalize your protein journey."
-                  : otpSent
-                  ? "Enter the OTP sent to your mobile or email."
-                  : "Login to continue your Protein Club journey."}
+              <p className="mt-2 text-xs leading-relaxed text-gray-600">
+                One account works seamlessly across EatProtein Website, Protein Club, Shop, and Mobile App.
               </p>
-            </div>
 
-            {/* ==================================================
-                REGISTER FORM
-            =================================================== */}
-            {mode === "register" && (
-              <form onSubmit={handleRegister} className="mt-6 space-y-4 sm:mt-7">
-                {/* Photo + Name */}
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-[150px_minmax(0,1fr)]">
-                  {/* Photo Upload */}
-                  <div className="flex items-center justify-center sm:justify-start">
-                    <label className="group relative flex h-[145px] w-[145px] cursor-pointer flex-col items-center justify-center rounded-full border-2 border-dashed border-green-300 bg-green-50/70 transition hover:border-green-600 hover:bg-green-50">
-                      {photo ? (
-                        <img
-                          src={photo}
-                          alt="Profile preview"
-                          className="h-full w-full rounded-full object-cover"
-                        />
-                      ) : (
-                        <>
-                          <Camera className="h-8 w-8 text-gray-700" />
-                          <span className="mt-2 text-xs font-bold text-gray-800">
-                            Upload Photo
-                          </span>
-                          <span className="mt-1 text-[10px] text-gray-500">
-                            JPG, PNG (Max 5 MB)
-                          </span>
-                        </>
-                      )}
-
-                      <span className="absolute bottom-0 right-1 flex h-9 w-9 items-center justify-center rounded-full bg-green-700 text-white shadow-md transition group-hover:bg-green-800">
-                        <Plus size={20} />
+              <div className="mt-6 space-y-4">
+                {[
+                  { num: 1, title: "Sign In / Verify", desc: "Google or Mobile OTP" },
+                  { num: 2, title: "Complete Profile", desc: "Name, age, city & diet" },
+                  { num: 3, title: "Set Your Goal", desc: "Daily protein requirement" },
+                  { num: 4, title: "Join Communities", desc: "Connect & start challenges" },
+                ].map((step) => {
+                  const done = step.num < currentStep;
+                  const active = step.num === currentStep;
+                  return (
+                    <div key={step.num} className="flex items-start gap-3">
+                      <span
+                        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-extrabold ${
+                          done || active
+                            ? "bg-protein-green text-white"
+                            : "border border-gray-300 bg-white text-gray-500"
+                        }`}
+                      >
+                        {done ? <CheckCircle2 size={15} /> : step.num}
                       </span>
-
-                      <input
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp"
-                        onChange={handlePhotoUpload}
-                        className="hidden"
-                      />
-                    </label>
-                  </div>
-
-                  {/* Full name */}
-                  <div className="min-w-0">
-                    <label className={labelClass}>
-                      Full Name <span className="text-red-500">*</span>
-                    </label>
-
-                    <div className="relative">
-                      <User className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-600" />
-                      <input
-                        type="text"
-                        name="fullName"
-                        value={form.fullName}
-                        onChange={handleFormChange}
-                        placeholder="Enter your full name"
-                        className={`${inputClass} pl-12`}
-                        required
-                      />
-                    </div>
-
-                    <p className="mt-2 text-xs text-gray-500">
-                      Your name will be displayed on your Protein Club profile.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Mobile and Email */}
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className={labelClass}>
-                      Mobile Number <span className="text-red-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <Phone className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-600" />
-                      <input
-                        type="tel"
-                        name="mobile"
-                        value={form.mobile}
-                        onChange={handleFormChange}
-                        placeholder="+91 Enter mobile number"
-                        className={`${inputClass} pl-12`}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className={labelClass}>Email Address</label>
-                    <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-600" />
-                      <input
-                        type="email"
-                        name="email"
-                        value={form.email}
-                        onChange={handleFormChange}
-                        placeholder="Enter your email address"
-                        className={`${inputClass} pl-12`}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Age + Gender */}
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className={labelClass}>
-                      Age <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      name="age"
-                      value={form.age}
-                      onChange={handleFormChange}
-                      min="1"
-                      max="120"
-                      placeholder="Enter your age"
-                      className={inputClass}
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className={labelClass}>
-                      Gender <span className="text-red-500">*</span>
-                    </label>
-
-                    <div className="grid grid-cols-3 gap-2">
-                      {["Male", "Female", "Other"].map((gender) => (
-                        <button
-                          key={gender}
-                          type="button"
-                          onClick={() =>
-                            setForm((prev) => ({ ...prev, gender }))
-                          }
-                          className={`rounded-xl border px-2 py-3 text-sm font-semibold transition ${
-                            form.gender === gender
-                              ? "border-green-600 bg-green-50 text-green-800 ring-2 ring-green-100"
-                              : "border-gray-300 bg-white text-gray-700 hover:border-green-400"
+                      <div>
+                        <p
+                          className={`text-sm font-bold ${
+                            active || done ? "text-protein-dark" : "text-gray-500"
                           }`}
                         >
-                          {gender}
-                        </button>
-                      ))}
+                          {step.title}
+                        </p>
+                        <p className="text-xs text-gray-500">{step.desc}</p>
+                      </div>
                     </div>
-                    
-                  </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="mt-6 rounded-xl border border-green-100 bg-white p-3.5 text-xs text-gray-600">
+              <p className="font-bold text-protein-dark">Privacy First</p>
+              <p className="mt-1">
+                Your mobile number and email stay private under your EatProtein profile and are never posted publicly.
+              </p>
+            </div>
+          </div>
+
+          {/* Right Form Flow */}
+          <div className="lg:col-span-8">
+            {!user ? (
+              <div>
+                <h1 className="text-2xl font-extrabold text-protein-dark sm:text-3xl">
+                  Join or Sign In to Protein Club
+                </h1>
+                <p className="mt-1.5 text-sm text-gray-600">
+                  Use your existing EatProtein account or sign in instantly below.
+                </p>
+
+                {/* Method Toggle */}
+                <div className="mt-5 inline-flex rounded-xl bg-protein-surface p-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAuthTab("google");
+                      setErrorMsg("");
+                      setPhoneSetupNeeded(false);
+                    }}
+                    className={`rounded-lg px-4 py-2 text-xs font-bold transition sm:text-sm ${
+                      authTab === "google"
+                        ? "bg-protein-green text-white shadow-sm"
+                        : "text-gray-700"
+                    }`}
+                  >
+                    Instant Google Sign-In
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAuthTab("phone");
+                      setErrorMsg("");
+                      setPhoneSetupNeeded(false);
+                    }}
+                    className={`rounded-lg px-4 py-2 text-xs font-bold transition sm:text-sm ${
+                      authTab === "phone"
+                        ? "bg-protein-green text-white shadow-sm"
+                        : "text-gray-700"
+                    }`}
+                  >
+                    Mobile Number + OTP
+                  </button>
                 </div>
 
-                {/* Location */}
-                <div>
-                  <label className={labelClass}>
-                    Location <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <MapPin className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-600" />
-                    <input
-                      type="text"
-                      name="location"
-                      value={form.location}
-                      onChange={handleFormChange}
-                      placeholder="Enter city / location"
-                      className={`${inputClass} pl-12`}
-                      required
-                    />
+                {errorMsg && (
+                  <div
+                    role="alert"
+                    className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3.5 text-sm text-red-700"
+                  >
+                    <p>{errorMsg}</p>
+                    {phoneSetupNeeded && authTab === "phone" && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAuthTab("google");
+                          setErrorMsg("");
+                          setPhoneSetupNeeded(false);
+                        }}
+                        className="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-protein-green px-4 py-1.5 text-xs font-bold text-white hover:bg-protein-hover"
+                      >
+                        Switch to Instant Google Sign-In
+                        <ArrowRight size={14} />
+                      </button>
+                    )}
                   </div>
-                </div>
+                )}
 
-                {/* Register button */}
-                <button
-                  type="submit"
-                  className="mx-auto mt-2 flex w-full max-w-[470px] items-center justify-center gap-3 rounded-full bg-gradient-to-r from-green-700 via-green-600 to-green-700 px-6 py-3.5 text-base font-extrabold text-white shadow-md transition hover:brightness-110 hover:shadow-lg sm:py-4 sm:text-lg"
-                >
-                  Continue
-                  <ArrowRight size={21} />
-                </button>
-
-                {/* Switch to login */}
-                <div className="flex items-center gap-3 pt-3">
-                  <span className="h-px flex-1 bg-gray-200" />
-                  <p className="text-center text-sm text-gray-700">
-                    Already have an EatProtein account?
+                {authTab === "google" ? (
+                  <div className="mt-6 rounded-2xl border border-gray-200 bg-protein-surface p-6">
+                    <h2 className="text-base font-extrabold text-gray-900">
+                      Continue with your Google account
+                    </h2>
+                    <p className="mt-1 text-sm text-gray-600">
+                      One-click verification for your unified EatProtein profile, communities, challenges, and Protein Coins.
+                    </p>
                     <button
                       type="button"
-                      onClick={() => switchMode("login")}
-                      className="ml-1 font-extrabold text-green-700 underline underline-offset-2 hover:text-green-900"
+                      onClick={handleGoogleSignIn}
+                      disabled={authBusy}
+                      className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-protein-green px-6 py-3.5 text-sm font-extrabold text-white shadow-md transition hover:bg-protein-hover disabled:opacity-60 sm:w-auto"
                     >
-                      Login
+                      {authBusy ? "Connecting to Google..." : "Continue with Google"}
+                      <ArrowRight size={17} />
                     </button>
-                  </p>
-                  <span className="h-px flex-1 bg-gray-200" />
-                </div>
-              </form>
-            )}
-
-            {/* ==================================================
-                LOGIN FORM
-            =================================================== */}
-            {mode === "login" && (
-              <div className="mx-auto mt-8 max-w-[500px]">
-                {!otpSent ? (
-                  <form onSubmit={handleSendOTP} className="space-y-5">
-                    <div>
-                      <label className={labelClass}>
-                        Mobile Number or Email{" "}
-                        <span className="text-red-500">*</span>
-                      </label>
-
-                      <div className="relative">
-                        <Mail className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-600" />
-                        <input
-                          type="text"
-                          value={loginContact}
-                          onChange={(e) => setLoginContact(e.target.value)}
-                          placeholder="Enter mobile number or email"
-                          className={`${inputClass} pl-12`}
-                          required
-                        />
-                      </div>
-
-                      <p className="mt-2 text-xs text-gray-500">
-                        We'll send a one-time password to verify your account.
-                      </p>
-                    </div>
-
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-green-700 to-green-600 px-6 py-3.5 text-base font-extrabold text-white shadow-md transition hover:brightness-110 disabled:opacity-70 sm:py-4"
-                    >
-                      {loading ? (
-                        <>
-                          <LoaderCircle className="h-5 w-5 animate-spin" />
-                          Sending OTP...
-                        </>
-                      ) : (
-                        <>
-                          Send OTP
-                          <ArrowRight size={20} />
-                        </>
-                      )}
-                    </button>
-                  </form>
+                  </div>
                 ) : (
-                  <form onSubmit={handleVerifyOTP} className="space-y-5">
-                    <div className="rounded-2xl border border-green-100 bg-green-50 p-4">
-                      <div className="flex items-center gap-2 text-green-800">
-                        <ShieldCheck size={20} />
-                        <p className="text-sm font-bold">OTP verification</p>
-                      </div>
-                      <p className="mt-1 break-all text-sm text-gray-700">
-                        Verification code sent to{" "}
-                        <span className="font-bold">{loginContact}</span>
-                      </p>
-                    </div>
-
-                    <div>
-                      <label className={labelClass}>
-                        Enter 6-digit OTP <span className="text-red-500">*</span>
-                      </label>
-
-                      <div className="relative">
-                        <LockKeyhole className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-600" />
+                  <div className="mt-6 rounded-2xl border border-gray-200 bg-protein-surface p-6">
+                    {!confirmationResult ? (
+                      <form onSubmit={handleSendPhoneOtp} className="space-y-4">
+                        <div>
+                          <label className="mb-1.5 block text-sm font-bold text-gray-800">
+                            Mobile Number
+                          </label>
+                          <div className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-3 py-2.5 focus-within:border-protein-green">
+                            <Phone size={18} className="text-gray-400" />
+                            <span className="border-r border-gray-200 pr-2 text-sm font-bold text-gray-600">
+                              +91
+                            </span>
+                            <input
+                              type="tel"
+                              value={phoneInput}
+                              onChange={(e) =>
+                                setPhoneInput(e.target.value.replace(/\D/g, "").slice(0, 10))
+                              }
+                              placeholder="Enter 10-digit mobile number"
+                              className="w-full bg-transparent text-sm outline-none"
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div id="club-recaptcha-container" />
+                        <button
+                          type="submit"
+                          disabled={authBusy}
+                          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-protein-green px-6 py-3 text-sm font-extrabold text-white hover:bg-protein-hover disabled:opacity-60 sm:w-auto"
+                        >
+                          {authBusy ? "Sending OTP..." : "Send OTP"}
+                          <ArrowRight size={16} />
+                        </button>
+                      </form>
+                    ) : (
+                      <form onSubmit={handleVerifyOtp} className="space-y-4">
+                        <p className="text-sm font-semibold text-gray-700">
+                          Enter the 6-digit OTP sent to +91 {phoneInput}
+                        </p>
                         <input
                           type="text"
                           inputMode="numeric"
-                          autoComplete="one-time-code"
                           maxLength={6}
-                          value={otp}
+                          value={otpInput}
                           onChange={(e) =>
-                            setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                            setOtpInput(e.target.value.replace(/\D/g, "").slice(0, 6))
                           }
-                          placeholder="Enter 6-digit OTP"
-                          className={`${inputClass} pl-12 text-center text-lg font-bold tracking-[0.4em]`}
+                          placeholder="000000"
+                          className="w-full max-w-xs rounded-xl border border-gray-300 px-4 py-3 text-center text-xl font-bold tracking-[0.4em] outline-none focus:border-protein-green"
+                          required
+                        />
+                        <div className="flex flex-wrap gap-3">
+                          <button
+                            type="submit"
+                            disabled={authBusy}
+                            className="rounded-full bg-protein-green px-6 py-3 text-sm font-extrabold text-white hover:bg-protein-hover"
+                          >
+                            {authBusy ? "Verifying..." : "Verify & Continue"}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setConfirmationResult(null);
+                              setOtpInput("");
+                              resetRecaptcha();
+                            }}
+                            className="rounded-full border border-gray-200 px-4 py-3 text-xs font-bold text-gray-600"
+                          >
+                            Change Number
+                          </button>
+                        </div>
+                      </form>
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div>
+                <h1 className="text-2xl font-extrabold text-protein-dark sm:text-3xl">
+                  Complete Your Profile
+                </h1>
+                <p className="mt-1 text-sm text-gray-600">
+                  Tell us a bit about yourself to personalize your Protein Club experience.
+                </p>
+
+                {errorMsg && (
+                  <div
+                    role="alert"
+                    className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700"
+                  >
+                    {errorMsg}
+                  </div>
+                )}
+
+                <form onSubmit={handleSaveProfile} className="mt-5 space-y-5">
+                  {/* Profile Photo + Presets */}
+                  <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-green-100 bg-protein-surface p-4">
+                    <div className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-protein-green bg-protein-soft">
+                      {form.photoURL ? (
+                        <img
+                          src={form.photoURL}
+                          alt="Profile preview"
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-protein-green">
+                          <UserRound size={28} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="flex items-center gap-1.5 text-xs font-bold text-gray-700">
+                        <Camera size={14} className="text-protein-green" /> Choose Profile Avatar
+                      </p>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {avatarPresets.map((preset) => (
+                          <button
+                            key={preset.label}
+                            type="button"
+                            onClick={() =>
+                              setForm((prev) => ({ ...prev, photoURL: preset.url }))
+                            }
+                            className={`rounded-lg border px-2.5 py-1 text-xs font-semibold transition ${
+                              form.photoURL === preset.url
+                                ? "border-protein-green bg-protein-green text-white"
+                                : "border-gray-200 bg-white text-gray-700 hover:border-green-400"
+                            }`}
+                          >
+                            {preset.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Full Name & Age */}
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-1.5 block text-sm font-bold text-gray-800">
+                        Full Name <span className="text-red-500">*</span>
+                      </label>
+                      <div className="flex items-center gap-2 rounded-xl border border-gray-300 px-3 py-2.5 focus-within:border-protein-green">
+                        <UserRound size={17} className="text-gray-400" />
+                        <input
+                          type="text"
+                          value={form.fullName}
+                          onChange={(e) =>
+                            setForm((p) => ({ ...p, fullName: e.target.value }))
+                          }
+                          placeholder="Manoj Kumar"
+                          className="w-full bg-transparent text-sm outline-none"
                           required
                         />
                       </div>
                     </div>
 
+                    <div>
+                      <label className="mb-1.5 block text-sm font-bold text-gray-800">
+                        Age <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="number"
+                        min={10}
+                        max={110}
+                        value={form.age}
+                        onChange={(e) => setForm((p) => ({ ...p, age: e.target.value }))}
+                        className="w-full rounded-xl border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-protein-green"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {/* Mobile & Email */}
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-1.5 block text-sm font-bold text-gray-800">
+                        Mobile Number
+                      </label>
+                      <div className="flex items-center gap-2 rounded-xl border border-gray-300 px-3 py-2.5 focus-within:border-protein-green">
+                        <Phone size={17} className="text-gray-400" />
+                        <input
+                          type="tel"
+                          value={form.mobile}
+                          onChange={(e) =>
+                            setForm((p) => ({ ...p, mobile: e.target.value }))
+                          }
+                          placeholder="+91 98765 43210"
+                          className="w-full bg-transparent text-sm outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="mb-1.5 block text-sm font-bold text-gray-800">
+                        Email Address
+                      </label>
+                      <div className="flex items-center gap-2 rounded-xl border border-gray-300 px-3 py-2.5 focus-within:border-protein-green">
+                        <Mail size={17} className="text-gray-400" />
+                        <input
+                          type="email"
+                          value={form.email}
+                          onChange={(e) =>
+                            setForm((p) => ({ ...p, email: e.target.value }))
+                          }
+                          placeholder="you@example.com"
+                          className="w-full bg-transparent text-sm outline-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Gender & Location */}
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-1.5 block text-sm font-bold text-gray-800">
+                        Gender
+                      </label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {["Male", "Female", "Other"].map((g) => (
+                          <button
+                            key={g}
+                            type="button"
+                            onClick={() => setForm((p) => ({ ...p, gender: g }))}
+                            className={`rounded-xl border py-2.5 text-xs font-bold transition sm:text-sm ${
+                              form.gender === g
+                                ? "border-protein-green bg-protein-soft text-protein-dark"
+                                : "border-gray-200 bg-white text-gray-700"
+                            }`}
+                          >
+                            {g}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="mb-1.5 block text-sm font-bold text-gray-800">
+                        Location
+                      </label>
+                      <div className="flex items-center gap-2 rounded-xl border border-gray-300 px-3 py-2.5 focus-within:border-protein-green">
+                        <MapPin size={17} className="text-gray-400" />
+                        <select
+                          value={form.location}
+                          onChange={(e) =>
+                            setForm((p) => ({ ...p, location: e.target.value }))
+                          }
+                          className="w-full bg-transparent text-sm outline-none"
+                        >
+                          {cities.map((c) => (
+                            <option key={c} value={c}>
+                              {c}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Diet Preference */}
+                  <div>
+                    <label className="mb-1.5 block text-sm font-bold text-gray-800">
+                      Diet Preference
+                    </label>
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                      {dietOptions.map((diet) => (
+                        <button
+                          key={diet}
+                          type="button"
+                          onClick={() =>
+                            setForm((p) => ({ ...p, dietPreference: diet }))
+                          }
+                          className={`rounded-xl border py-2.5 text-xs font-bold transition sm:text-sm ${
+                            form.dietPreference === diet
+                              ? "border-protein-green bg-protein-green text-white"
+                              : "border-gray-200 bg-white text-gray-700 hover:border-green-400"
+                          }`}
+                        >
+                          {diet}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-end gap-3 border-t border-gray-100 pt-4">
                     <button
                       type="submit"
-                      className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-green-700 to-green-600 px-6 py-3.5 text-base font-extrabold text-white shadow-md transition hover:brightness-110 sm:py-4"
+                      disabled={saveBusy}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-protein-green px-8 py-3.5 text-sm font-extrabold text-white shadow-md transition hover:bg-protein-hover disabled:opacity-60 sm:w-auto"
                     >
-                      Verify OTP
-                      <CheckCircle2 size={20} />
+                      {saveBusy ? "Saving Profile..." : "Continue to Protein Goal"}
+                      <ArrowRight size={17} />
                     </button>
-
-                    <div className="flex items-center justify-between gap-2 text-sm">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setOtpSent(false);
-                          setOtp("");
-                        }}
-                        className="inline-flex items-center gap-1 font-bold text-gray-600 hover:text-green-800"
-                      >
-                        <ArrowLeft size={16} />
-                        Change mobile/email
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setOtp("");
-                          setOtpSent(false);
-                        }}
-                        className="font-bold text-green-700 underline underline-offset-2 hover:text-green-900"
-                      >
-                        Resend OTP
-                      </button>
-                    </div>
-                  </form>
-                )}
-
-                {/* Switch to register */}
-                <div className="mt-7 flex items-center gap-3">
-                  <span className="h-px flex-1 bg-gray-200" />
-                  <p className="text-center text-sm text-gray-700">
-                    New to EatProtein?
-                    <button
-                      type="button"
-                      onClick={() => switchMode("register")}
-                      className="ml-1 font-extrabold text-green-700 underline underline-offset-2 hover:text-green-900"
-                    >
-                      Register
-                    </button>
-                  </p>
-                  <span className="h-px flex-1 bg-gray-200" />
-                </div>
+                  </div>
+                </form>
               </div>
             )}
           </div>
-        </section>
-
-        {/* ==================================================
-            RIGHT FOOD IMAGE
-        =================================================== */}
-        <aside className="relative hidden h-full min-h-[580px] items-center justify-center lg:flex">
-          <div className="absolute right-0 top-[12%] h-72 w-72 rounded-full bg-green-50" />
-
-          <img
-            src="/assets/protein-auth-food.webp"
-            alt="Healthy high protein meal"
-            className="relative z-10 max-h-[620px] w-full object-contain"
-            onError={(e) => {
-              e.currentTarget.style.display = "none";
-            }}
-          />
-        </aside>
+        </div>
       </div>
-    </main>
+    </div>
   );
 }

@@ -1,0 +1,931 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global safety net: deny everything by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // =====================================================
+    // PRIMITIVE HELPERS
+    // =====================================================
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && (
+        request.auth.token.email_verified == true ||
+        request.auth.token.phone_number != null
+      );
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        (
+          request.auth.token.email == 'ramalingambalaji54@gmail.com' &&
+          request.auth.token.email_verified == true
+        ) ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string &&
+        id.size() >= 1 &&
+        id.size() <= 128 &&
+        id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isOptStr(data, key, maxLen) {
+      return !(key in data) || (data[key] is string && data[key].size() <= maxLen);
+    }
+
+    function isBoundedStrList(listVal, maxItems) {
+      return listVal is list &&
+        listVal.size() <= maxItems &&
+        (listVal.size() == 0 || listVal[0] is string);
+    }
+
+    // =====================================================
+    // VALIDATION BLUEPRINTS
+    // =====================================================
+    function isValidAdminRecord(data) {
+      return data.keys().hasAll(['uid', 'email', 'role', 'createdAt']) &&
+        data.keys().hasOnly(['uid', 'email', 'role', 'createdAt']) &&
+        isValidId(data.uid) &&
+        data.email is string && data.email.size() >= 3 && data.email.size() <= 160 &&
+        data.role in ['admin', 'super_admin'] &&
+        data.createdAt is timestamp;
+    }
+
+    function isValidUserPublic(data) {
+      return data.keys().hasAll([
+          'uid', 'displayName', 'goal', 'dailyProteinTarget',
+          'points', 'coins', 'status', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'uid', 'displayName', 'photoURL', 'location', 'goal',
+          'dietPreference', 'dailyProteinTarget', 'todayProtein', 'streak',
+          'points', 'coins', 'rankBadge', 'status',
+          'joinedCommunitiesCount', 'activeChallengesCount',
+          'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.uid) &&
+        data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 80 &&
+        isOptStr(data, 'photoURL', 500) &&
+        isOptStr(data, 'location', 100) &&
+        data.goal in [
+          'Build Muscle', 'Lose Fat', 'Improve Health',
+          'Family Nutrition', 'Eat More Protein', 'Stay Active'
+        ] &&
+        (!( 'dietPreference' in data ) || data.dietPreference in [
+          'Veg', 'Vegetarian', 'Non-Veg', 'Non-Vegetarian',
+          'Eggetarian', 'Egg & Dairy', 'Vegan', 'Any'
+        ]) &&
+        data.dailyProteinTarget is number && data.dailyProteinTarget >= 20 && data.dailyProteinTarget <= 400 &&
+        (!( 'todayProtein' in data ) || (data.todayProtein is number && data.todayProtein >= 0 && data.todayProtein <= 500)) &&
+        (!( 'streak' in data ) || (data.streak is number && data.streak >= 0 && data.streak <= 3650)) &&
+        data.points is number && data.points >= 0 && data.points <= 1000000 &&
+        data.coins is number && data.coins >= 0 && data.coins <= 1000000 &&
+        isOptStr(data, 'rankBadge', 40) &&
+        data.status in ['active', 'warned', 'restricted', 'blocked'] &&
+        (!( 'joinedCommunitiesCount' in data ) || (data.joinedCommunitiesCount is number && data.joinedCommunitiesCount >= 0 && data.joinedCommunitiesCount <= 200)) &&
+        (!( 'activeChallengesCount' in data ) || (data.activeChallengesCount is number && data.activeChallengesCount >= 0 && data.activeChallengesCount <= 100)) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidUserPrivate(data) {
+      return data.keys().hasAll(['uid', 'fullName', 'updatedAt']) &&
+        data.keys().hasOnly([
+          'uid', 'fullName', 'email', 'mobile', 'age', 'gender',
+          'heightCm', 'weightKg', 'activityLevel', 'updatedAt'
+        ]) &&
+        isValidId(data.uid) &&
+        data.fullName is string && data.fullName.size() >= 1 && data.fullName.size() <= 100 &&
+        isOptStr(data, 'email', 160) &&
+        isOptStr(data, 'mobile', 20) &&
+        (!( 'age' in data ) || (data.age is number && data.age >= 1 && data.age <= 120)) &&
+        (!( 'gender' in data ) || data.gender in ['Male', 'Female', 'Other', '']) &&
+        (!( 'heightCm' in data ) || (data.heightCm is number && data.heightCm >= 40 && data.heightCm <= 260)) &&
+        (!( 'weightKg' in data ) || (data.weightKg is number && data.weightKg >= 5 && data.weightKg <= 350)) &&
+        isOptStr(data, 'activityLevel', 60) &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidSavedPost(data) {
+      return data.keys().hasAll(['uid', 'postId', 'savedAt']) &&
+        data.keys().hasOnly(['uid', 'postId', 'communitySlug', 'savedAt']) &&
+        isValidId(data.uid) &&
+        isValidId(data.postId) &&
+        isOptStr(data, 'communitySlug', 100) &&
+        data.savedAt is timestamp;
+    }
+
+    function isValidBlockedUser(data) {
+      return data.keys().hasAll(['uid', 'blockedUid', 'createdAt']) &&
+        data.keys().hasOnly(['uid', 'blockedUid', 'blockedName', 'createdAt']) &&
+        isValidId(data.uid) &&
+        isValidId(data.blockedUid) &&
+        isOptStr(data, 'blockedName', 80) &&
+        data.createdAt is timestamp;
+    }
+
+    function isValidProteinLog(data) {
+      return data.keys().hasAll(['id', 'uid', 'date', 'mealName', 'proteinGrams', 'createdAt']) &&
+        data.keys().hasOnly(['id', 'uid', 'date', 'mealName', 'proteinGrams', 'notes', 'createdAt']) &&
+        isValidId(data.id) &&
+        isValidId(data.uid) &&
+        data.date is string && data.date.size() >= 4 && data.date.size() <= 20 &&
+        data.mealName is string && data.mealName.size() >= 1 && data.mealName.size() <= 120 &&
+        data.proteinGrams is number && data.proteinGrams >= 1 && data.proteinGrams <= 250 &&
+        isOptStr(data, 'notes', 300) &&
+        data.createdAt is timestamp;
+    }
+
+    function isValidCommunity(data) {
+      return data.keys().hasAll([
+          'id', 'slug', 'title', 'description', 'goal',
+          'status', 'membersCount', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'slug', 'title', 'shortTitle', 'badge', 'official',
+          'category', 'description', 'about', 'goal', 'diet', 'stage',
+          'location', 'heroImage', 'membersCount', 'discussionsCount',
+          'challengesCount', 'status', 'started', 'benefits',
+          'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.slug) &&
+        data.title is string && data.title.size() >= 2 && data.title.size() <= 120 &&
+        isOptStr(data, 'shortTitle', 80) &&
+        isOptStr(data, 'badge', 60) &&
+        (!( 'official' in data ) || data.official is bool) &&
+        isOptStr(data, 'category', 60) &&
+        data.description is string && data.description.size() >= 2 && data.description.size() <= 500 &&
+        isOptStr(data, 'about', 1200) &&
+        data.goal is string && data.goal.size() >= 2 && data.goal.size() <= 60 &&
+        (!( 'diet' in data ) || isBoundedStrList(data.diet, 10)) &&
+        (!( 'stage' in data ) || isBoundedStrList(data.stage, 10)) &&
+        isOptStr(data, 'location', 80) &&
+        isOptStr(data, 'heroImage', 500) &&
+        data.membersCount is number && data.membersCount >= 0 && data.membersCount <= 10000000 &&
+        (!( 'discussionsCount' in data ) || (data.discussionsCount is number && data.discussionsCount >= 0 && data.discussionsCount <= 10000000)) &&
+        (!( 'challengesCount' in data ) || (data.challengesCount is number && data.challengesCount >= 0 && data.challengesCount <= 1000)) &&
+        data.status in ['active', 'paused'] &&
+        isOptStr(data, 'started', 40) &&
+        (!( 'benefits' in data ) || isBoundedStrList(data.benefits, 10)) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidCommunityMember(data) {
+      return data.keys().hasAll(['uid', 'communityId', 'displayName', 'role', 'status', 'joinedAt', 'updatedAt']) &&
+        data.keys().hasOnly(['uid', 'communityId', 'displayName', 'photoURL', 'role', 'status', 'joinedAt', 'updatedAt']) &&
+        isValidId(data.uid) &&
+        isValidId(data.communityId) &&
+        data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 80 &&
+        isOptStr(data, 'photoURL', 500) &&
+        data.role in ['member', 'leader', 'moderator'] &&
+        data.status in ['active', 'restricted', 'blocked'] &&
+        data.joinedAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidPost(data) {
+      return data.keys().hasAll([
+          'id', 'communityId', 'communitySlug', 'authorId', 'authorName',
+          'category', 'text', 'likesCount', 'commentsCount',
+          'status', 'isPinned', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'communityId', 'communitySlug', 'authorId', 'authorName',
+          'authorAvatar', 'authorRole', 'category', 'text', 'tags',
+          'imageUrl', 'pollOptions', 'likesCount', 'commentsCount',
+          'status', 'isPinned', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.communityId) &&
+        isValidId(data.communitySlug) &&
+        isValidId(data.authorId) &&
+        data.authorName is string && data.authorName.size() >= 1 && data.authorName.size() <= 80 &&
+        isOptStr(data, 'authorAvatar', 500) &&
+        isOptStr(data, 'authorRole', 40) &&
+        data.category in ['Progress', 'Questions', 'Tips', 'Recipes', 'Workouts', 'Poll'] &&
+        data.text is string && data.text.size() >= 1 && data.text.size() <= 2000 &&
+        (!( 'tags' in data ) || isBoundedStrList(data.tags, 10)) &&
+        isOptStr(data, 'imageUrl', 500) &&
+        (!( 'pollOptions' in data ) || isBoundedStrList(data.pollOptions, 6)) &&
+        data.likesCount is number && data.likesCount >= 0 && data.likesCount <= 10000000 &&
+        data.commentsCount is number && data.commentsCount >= 0 && data.commentsCount <= 10000000 &&
+        data.status in ['published', 'hidden', 'deleted'] &&
+        data.isPinned is bool &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidComment(data) {
+      return data.keys().hasAll(['id', 'postId', 'authorId', 'authorName', 'text', 'likesCount', 'status', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly([
+          'id', 'postId', 'authorId', 'authorName', 'authorAvatar',
+          'parentCommentId', 'text', 'likesCount', 'status', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.postId) &&
+        isValidId(data.authorId) &&
+        data.authorName is string && data.authorName.size() >= 1 && data.authorName.size() <= 80 &&
+        isOptStr(data, 'authorAvatar', 500) &&
+        isOptStr(data, 'parentCommentId', 128) &&
+        data.text is string && data.text.size() >= 1 && data.text.size() <= 1000 &&
+        data.likesCount is number && data.likesCount >= 0 && data.likesCount <= 1000000 &&
+        data.status in ['published', 'hidden', 'deleted'] &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidPostLike(data) {
+      return data.keys().hasAll(['uid', 'postId', 'createdAt']) &&
+        data.keys().hasOnly(['uid', 'postId', 'createdAt']) &&
+        isValidId(data.uid) &&
+        isValidId(data.postId) &&
+        data.createdAt is timestamp;
+    }
+
+    function isValidChallenge(data) {
+      return data.keys().hasAll(['id', 'title', 'durationDays', 'status', 'participantsCount', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly([
+          'id', 'title', 'subtitle', 'communityId', 'durationDays', 'goal',
+          'participantsCount', 'rewardPoints', 'rewardCoins', 'status',
+          'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        data.title is string && data.title.size() >= 2 && data.title.size() <= 120 &&
+        isOptStr(data, 'subtitle', 300) &&
+        isOptStr(data, 'communityId', 128) &&
+        data.durationDays is number && data.durationDays >= 1 && data.durationDays <= 365 &&
+        isOptStr(data, 'goal', 60) &&
+        data.participantsCount is number && data.participantsCount >= 0 && data.participantsCount <= 10000000 &&
+        (!( 'rewardPoints' in data ) || (data.rewardPoints is number && data.rewardPoints >= 0 && data.rewardPoints <= 100000)) &&
+        (!( 'rewardCoins' in data ) || (data.rewardCoins is number && data.rewardCoins >= 0 && data.rewardCoins <= 100000)) &&
+        data.status in ['active', 'draft', 'archived'] &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidChallengeParticipant(data) {
+      return data.keys().hasAll([
+          'uid', 'challengeId', 'displayName', 'currentDay',
+          'completedDays', 'streak', 'status', 'joinedAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'uid', 'challengeId', 'displayName', 'currentDay', 'completedDays',
+          'streak', 'pointsEarned', 'coinsEarned', 'status', 'joinedAt', 'updatedAt'
+        ]) &&
+        isValidId(data.uid) &&
+        isValidId(data.challengeId) &&
+        data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 80 &&
+        data.currentDay is number && data.currentDay >= 1 && data.currentDay <= 365 &&
+        data.completedDays is list && data.completedDays.size() <= 365 &&
+        (data.completedDays.size() == 0 || data.completedDays[0] is number) &&
+        data.streak is number && data.streak >= 0 && data.streak <= 365 &&
+        (!( 'pointsEarned' in data ) || (data.pointsEarned is number && data.pointsEarned >= 0 && data.pointsEarned <= 100000)) &&
+        (!( 'coinsEarned' in data ) || (data.coinsEarned is number && data.coinsEarned >= 0 && data.coinsEarned <= 100000)) &&
+        data.status in ['in_progress', 'completed'] &&
+        data.joinedAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidReward(data) {
+      return data.keys().hasAll(['id', 'title', 'coinsCost', 'status', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly([
+          'id', 'title', 'description', 'category', 'coinsCost',
+          'codePrefix', 'status', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        data.title is string && data.title.size() >= 2 && data.title.size() <= 120 &&
+        isOptStr(data, 'description', 300) &&
+        isOptStr(data, 'category', 60) &&
+        data.coinsCost is number && data.coinsCost >= 1 && data.coinsCost <= 1000000 &&
+        isOptStr(data, 'codePrefix', 20) &&
+        data.status in ['active', 'paused'] &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidRedemption(data) {
+      return data.keys().hasAll([
+          'id', 'uid', 'rewardId', 'rewardTitle', 'coinsSpent',
+          'couponCode', 'status', 'redeemedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'uid', 'rewardId', 'rewardTitle', 'coinsSpent',
+          'couponCode', 'status', 'redeemedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.uid) &&
+        isValidId(data.rewardId) &&
+        data.rewardTitle is string && data.rewardTitle.size() >= 1 && data.rewardTitle.size() <= 120 &&
+        data.coinsSpent is number && data.coinsSpent >= 1 && data.coinsSpent <= 1000000 &&
+        data.couponCode is string && data.couponCode.size() >= 4 && data.couponCode.size() <= 40 &&
+        data.status in ['issued', 'used'] &&
+        data.redeemedAt is timestamp;
+    }
+
+    function isValidReport(data) {
+      return data.keys().hasAll([
+          'id', 'reporterId', 'reporterName', 'targetType', 'targetId',
+          'reason', 'status', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'reporterId', 'reporterName', 'targetType', 'targetId',
+          'communityId', 'reason', 'status', 'adminNotes', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.reporterId) &&
+        data.reporterName is string && data.reporterName.size() >= 1 && data.reporterName.size() <= 80 &&
+        data.targetType in ['post', 'comment', 'member'] &&
+        isValidId(data.targetId) &&
+        isOptStr(data, 'communityId', 128) &&
+        data.reason is string && data.reason.size() >= 3 && data.reason.size() <= 500 &&
+        data.status in ['pending', 'reviewed', 'resolved', 'dismissed'] &&
+        isOptStr(data, 'adminNotes', 500) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidSuggestion(data) {
+      return data.keys().hasAll([
+          'id', 'uid', 'communityName', 'audience', 'goal',
+          'reason', 'status', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'uid', 'communityName', 'audience', 'goal', 'diet',
+          'reason', 'useCase', 'status', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.uid) &&
+        data.communityName is string && data.communityName.size() >= 2 && data.communityName.size() <= 120 &&
+        data.audience is string && data.audience.size() >= 2 && data.audience.size() <= 60 &&
+        data.goal is string && data.goal.size() >= 2 && data.goal.size() <= 60 &&
+        isOptStr(data, 'diet', 40) &&
+        data.reason is string && data.reason.size() >= 5 && data.reason.size() <= 1000 &&
+        isOptStr(data, 'useCase', 1000) &&
+        data.status in ['pending', 'approved', 'rejected'] &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidLeaderApplication(data) {
+      return data.keys().hasAll([
+          'id', 'uid', 'fullName', 'city', 'occupation',
+          'interest', 'reason', 'status', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'uid', 'fullName', 'city', 'occupation', 'experience',
+          'interest', 'reason', 'status', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.uid) &&
+        data.fullName is string && data.fullName.size() >= 2 && data.fullName.size() <= 100 &&
+        data.city is string && data.city.size() >= 2 && data.city.size() <= 80 &&
+        data.occupation is string && data.occupation.size() >= 2 && data.occupation.size() <= 80 &&
+        isOptStr(data, 'experience', 300) &&
+        data.interest is string && data.interest.size() >= 2 && data.interest.size() <= 120 &&
+        data.reason is string && data.reason.size() >= 5 && data.reason.size() <= 1500 &&
+        data.status in ['pending', 'approved', 'rejected'] &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidClubEvent(data) {
+      return data.keys().hasAll([
+          'id', 'title', 'type', 'dateLabel', 'status',
+          'rsvpCount', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'title', 'communityId', 'communityTitle', 'hostName',
+          'dateLabel', 'timeLabel', 'type', 'description', 'rsvpCount',
+          'status', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        data.title is string && data.title.size() >= 2 && data.title.size() <= 140 &&
+        isOptStr(data, 'communityId', 128) &&
+        isOptStr(data, 'communityTitle', 120) &&
+        isOptStr(data, 'hostName', 80) &&
+        data.dateLabel is string && data.dateLabel.size() >= 2 && data.dateLabel.size() <= 60 &&
+        isOptStr(data, 'timeLabel', 60) &&
+        data.type in ['Webinar', 'Meetup', 'Workshop'] &&
+        isOptStr(data, 'description', 500) &&
+        data.rsvpCount is number && data.rsvpCount >= 0 && data.rsvpCount <= 1000000 &&
+        data.status in ['upcoming', 'completed', 'cancelled'] &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidEventRsvp(data) {
+      return data.keys().hasAll(['uid', 'eventId', 'displayName', 'createdAt']) &&
+        data.keys().hasOnly(['uid', 'eventId', 'displayName', 'createdAt']) &&
+        isValidId(data.uid) &&
+        isValidId(data.eventId) &&
+        data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 80 &&
+        data.createdAt is timestamp;
+    }
+
+    // =====================================================
+    // COLLECTION MATCH BLOCKS
+    // =====================================================
+    match /test/connection {
+      allow get: if true;
+    }
+
+    match /admins/{uid} {
+      allow get: if isValidId(uid) && (isOwner(uid) || isAdmin());
+      allow list: if isAdmin();
+      allow create: if isAdmin() &&
+        isValidId(uid) &&
+        isValidAdminRecord(incoming()) &&
+        incoming().uid == uid &&
+        incoming().createdAt == request.time;
+      allow update: if isAdmin() &&
+        isValidId(uid) &&
+        isValidAdminRecord(incoming()) &&
+        incoming().uid == existing().uid &&
+        incoming().createdAt == existing().createdAt;
+      allow delete: if isAdmin() && isValidId(uid);
+    }
+
+    match /users/{uid} {
+      allow get: if isValidId(uid) &&
+        (existing().status in ['active', 'warned', 'restricted'] || isOwner(uid) || isAdmin());
+      allow list: if resource.data.status in ['active', 'warned', 'restricted'] || isOwner(resource.data.uid) || isAdmin();
+      allow create: if isVerifiedUser() &&
+        isValidId(uid) &&
+        isOwner(uid) &&
+        isValidUserPublic(incoming()) &&
+        incoming().uid == request.auth.uid &&
+        incoming().status == 'active' &&
+        incoming().points == 0 &&
+        incoming().coins == 0 &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+      allow update: if isVerifiedUser() &&
+        isValidId(uid) &&
+        isValidUserPublic(incoming()) &&
+        incoming().uid == existing().uid &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time && (
+          isAdmin() || (
+            isOwner(uid) &&
+            incoming().status == existing().status &&
+            incoming().points >= existing().points &&
+            incoming().points <= existing().points + 1000 &&
+            incoming().coins <= existing().coins + 1000 &&
+            incoming().diff(existing()).affectedKeys().hasOnly([
+              'displayName', 'photoURL', 'location', 'goal', 'dietPreference',
+              'dailyProteinTarget', 'todayProtein', 'streak', 'points', 'coins',
+              'rankBadge', 'joinedCommunitiesCount', 'activeChallengesCount',
+              'updatedAt'
+            ])
+          )
+        );
+      allow delete: if isAdmin() && isValidId(uid);
+
+      match /private/info {
+        allow get: if isValidId(uid) && (isOwner(uid) || isAdmin());
+        allow list: if false;
+        allow create: if isVerifiedUser() &&
+          isValidId(uid) &&
+          isOwner(uid) &&
+          isValidUserPrivate(incoming()) &&
+          incoming().uid == request.auth.uid &&
+          incoming().updatedAt == request.time;
+        allow update: if isVerifiedUser() &&
+          isValidId(uid) &&
+          isValidUserPrivate(incoming()) &&
+          incoming().uid == existing().uid &&
+          incoming().updatedAt == request.time && (
+            isAdmin() || (
+              isOwner(uid) &&
+              incoming().diff(existing()).affectedKeys().hasOnly([
+                'fullName', 'email', 'mobile', 'age', 'gender',
+                'heightCm', 'weightKg', 'activityLevel', 'updatedAt'
+              ])
+            )
+          );
+      }
+
+      match /savedPosts/{postId} {
+        allow get: if isValidId(uid) && isValidId(postId) && isOwner(uid);
+        allow list: if isValidId(uid) && isOwner(uid) && resource.data.uid == request.auth.uid;
+        allow create: if isVerifiedUser() &&
+          isValidId(uid) &&
+          isValidId(postId) &&
+          isOwner(uid) &&
+          isValidSavedPost(incoming()) &&
+          incoming().uid == request.auth.uid &&
+          incoming().postId == postId &&
+          incoming().savedAt == request.time;
+        allow delete: if isVerifiedUser() && isValidId(uid) && isValidId(postId) && isOwner(uid);
+      }
+
+      match /blockedUsers/{blockedUid} {
+        allow get: if isValidId(uid) && isValidId(blockedUid) && isOwner(uid);
+        allow list: if isValidId(uid) && isOwner(uid) && resource.data.uid == request.auth.uid;
+        allow create: if isVerifiedUser() &&
+          isValidId(uid) &&
+          isValidId(blockedUid) &&
+          isOwner(uid) &&
+          isValidBlockedUser(incoming()) &&
+          incoming().uid == request.auth.uid &&
+          incoming().blockedUid == blockedUid &&
+          incoming().createdAt == request.time;
+        allow delete: if isVerifiedUser() && isValidId(uid) && isValidId(blockedUid) && isOwner(uid);
+      }
+
+      match /proteinLogs/{logId} {
+        allow get: if isValidId(uid) && isValidId(logId) && (isOwner(uid) || isAdmin());
+        allow list: if isValidId(uid) && ((isOwner(uid) && resource.data.uid == request.auth.uid) || isAdmin());
+        allow create: if isVerifiedUser() &&
+          isValidId(uid) &&
+          isValidId(logId) &&
+          isOwner(uid) &&
+          isValidProteinLog(incoming()) &&
+          incoming().id == logId &&
+          incoming().uid == request.auth.uid &&
+          incoming().createdAt == request.time;
+        allow delete: if isVerifiedUser() && isValidId(uid) && isValidId(logId) && (isOwner(uid) || isAdmin());
+      }
+    }
+
+    match /communities/{communityId} {
+      allow get: if isValidId(communityId) && (existing().status == 'active' || isAdmin());
+      allow list: if resource.data.status == 'active' || isAdmin();
+      allow create: if isAdmin() &&
+        isValidId(communityId) &&
+        isValidCommunity(incoming()) &&
+        incoming().id == communityId &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+      allow update: if isVerifiedUser() &&
+        isValidId(communityId) &&
+        isValidCommunity(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time && (
+          isAdmin() || (
+            incoming().diff(existing()).affectedKeys().hasOnly(['membersCount', 'discussionsCount', 'updatedAt']) &&
+            incoming().membersCount >= existing().membersCount - 1 &&
+            incoming().membersCount <= existing().membersCount + 1 &&
+            incoming().discussionsCount >= existing().discussionsCount &&
+            incoming().discussionsCount <= existing().discussionsCount + 1
+          )
+        );
+      allow delete: if isAdmin() && isValidId(communityId);
+
+      match /members/{memberId} {
+        allow get: if isValidId(communityId) &&
+          isValidId(memberId) &&
+          (existing().status == 'active' || isOwner(memberId) || isAdmin());
+        allow list: if resource.data.status == 'active' ||
+          (isSignedIn() && resource.data.uid == request.auth.uid) ||
+          isAdmin();
+        allow create: if isVerifiedUser() &&
+          isValidId(communityId) &&
+          isValidId(memberId) &&
+          isOwner(memberId) &&
+          isValidCommunityMember(incoming()) &&
+          incoming().uid == request.auth.uid &&
+          incoming().communityId == communityId &&
+          incoming().role == 'member' &&
+          incoming().status == 'active' &&
+          incoming().joinedAt == request.time &&
+          incoming().updatedAt == request.time &&
+          exists(/databases/$(database)/documents/communities/$(communityId));
+        allow update: if isAdmin() &&
+          isValidId(communityId) &&
+          isValidId(memberId) &&
+          isValidCommunityMember(incoming()) &&
+          incoming().uid == existing().uid &&
+          incoming().communityId == existing().communityId &&
+          incoming().joinedAt == existing().joinedAt &&
+          incoming().updatedAt == request.time;
+        allow delete: if isVerifiedUser() &&
+          isValidId(communityId) &&
+          isValidId(memberId) &&
+          (isOwner(memberId) || isAdmin());
+      }
+    }
+
+    match /posts/{postId} {
+      allow get: if isValidId(postId) &&
+        (existing().status == 'published' || isOwner(existing().authorId) || isAdmin());
+      allow list: if resource.data.status == 'published' ||
+        (isSignedIn() && resource.data.authorId == request.auth.uid) ||
+        isAdmin();
+      allow create: if isVerifiedUser() &&
+        isValidId(postId) &&
+        isValidPost(incoming()) &&
+        incoming().id == postId &&
+        incoming().authorId == request.auth.uid &&
+        incoming().status == 'published' &&
+        incoming().isPinned == false &&
+        incoming().likesCount == 0 &&
+        incoming().commentsCount == 0 &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time &&
+        exists(/databases/$(database)/documents/communities/$(incoming().communityId));
+      allow update: if isVerifiedUser() &&
+        isValidId(postId) &&
+        isValidPost(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().communityId == existing().communityId &&
+        incoming().authorId == existing().authorId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time && (
+          isAdmin() || (
+            isOwner(existing().authorId) &&
+            existing().status == 'published' &&
+            incoming().status == existing().status &&
+            incoming().isPinned == existing().isPinned &&
+            incoming().likesCount == existing().likesCount &&
+            incoming().commentsCount == existing().commentsCount &&
+            incoming().diff(existing()).affectedKeys().hasOnly(['text', 'category', 'tags', 'updatedAt'])
+          ) || (
+            existing().status == 'published' &&
+            incoming().diff(existing()).affectedKeys().hasOnly(['likesCount', 'commentsCount', 'updatedAt']) &&
+            incoming().likesCount >= existing().likesCount - 1 &&
+            incoming().likesCount <= existing().likesCount + 1 &&
+            incoming().commentsCount >= existing().commentsCount &&
+            incoming().commentsCount <= existing().commentsCount + 1
+          )
+        );
+      allow delete: if isVerifiedUser() &&
+        isValidId(postId) &&
+        (isOwner(existing().authorId) || isAdmin());
+
+      match /comments/{commentId} {
+        allow get: if isValidId(postId) &&
+          isValidId(commentId) &&
+          (existing().status == 'published' || isOwner(existing().authorId) || isAdmin());
+        allow list: if resource.data.status == 'published' ||
+          (isSignedIn() && resource.data.authorId == request.auth.uid) ||
+          isAdmin();
+        allow create: if isVerifiedUser() &&
+          isValidId(postId) &&
+          isValidId(commentId) &&
+          isValidComment(incoming()) &&
+          incoming().id == commentId &&
+          incoming().postId == postId &&
+          incoming().authorId == request.auth.uid &&
+          incoming().status == 'published' &&
+          incoming().likesCount == 0 &&
+          incoming().createdAt == request.time &&
+          incoming().updatedAt == request.time &&
+          exists(/databases/$(database)/documents/posts/$(postId));
+        allow update: if isVerifiedUser() &&
+          isValidId(postId) &&
+          isValidId(commentId) &&
+          isValidComment(incoming()) &&
+          incoming().id == existing().id &&
+          incoming().postId == existing().postId &&
+          incoming().authorId == existing().authorId &&
+          incoming().createdAt == existing().createdAt &&
+          incoming().updatedAt == request.time && (
+            isAdmin() || (
+              isOwner(existing().authorId) &&
+              existing().status == 'published' &&
+              incoming().diff(existing()).affectedKeys().hasOnly(['text', 'updatedAt'])
+            )
+          );
+        allow delete: if isVerifiedUser() &&
+          isValidId(postId) &&
+          isValidId(commentId) &&
+          (isOwner(existing().authorId) || isAdmin());
+      }
+
+      match /likes/{uid} {
+        allow get: if isValidId(postId) && isValidId(uid);
+        allow list: if isValidId(postId) && resource.data.postId == postId;
+        allow create: if isVerifiedUser() &&
+          isValidId(postId) &&
+          isValidId(uid) &&
+          isOwner(uid) &&
+          isValidPostLike(incoming()) &&
+          incoming().uid == request.auth.uid &&
+          incoming().postId == postId &&
+          incoming().createdAt == request.time &&
+          exists(/databases/$(database)/documents/posts/$(postId));
+        allow delete: if isVerifiedUser() &&
+          isValidId(postId) &&
+          isValidId(uid) &&
+          (isOwner(uid) || isAdmin());
+      }
+    }
+
+    match /challenges/{challengeId} {
+      allow get: if isValidId(challengeId) && (existing().status == 'active' || isAdmin());
+      allow list: if resource.data.status == 'active' || isAdmin();
+      allow create: if isAdmin() &&
+        isValidId(challengeId) &&
+        isValidChallenge(incoming()) &&
+        incoming().id == challengeId &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+      allow update: if isVerifiedUser() &&
+        isValidId(challengeId) &&
+        isValidChallenge(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time && (
+          isAdmin() || (
+            incoming().diff(existing()).affectedKeys().hasOnly(['participantsCount', 'updatedAt']) &&
+            incoming().participantsCount >= existing().participantsCount &&
+            incoming().participantsCount <= existing().participantsCount + 1
+          )
+        );
+      allow delete: if isAdmin() && isValidId(challengeId);
+
+      match /participants/{uid} {
+        allow get: if isValidId(challengeId) &&
+          isValidId(uid) &&
+          (isOwner(uid) || isAdmin() || existing().streak >= 0);
+        allow list: if isValidId(challengeId) && resource.data.challengeId == challengeId;
+        allow create: if isVerifiedUser() &&
+          isValidId(challengeId) &&
+          isValidId(uid) &&
+          isOwner(uid) &&
+          isValidChallengeParticipant(incoming()) &&
+          incoming().uid == request.auth.uid &&
+          incoming().challengeId == challengeId &&
+          incoming().joinedAt == request.time &&
+          incoming().updatedAt == request.time &&
+          exists(/databases/$(database)/documents/challenges/$(challengeId));
+        allow update: if isVerifiedUser() &&
+          isValidId(challengeId) &&
+          isValidId(uid) &&
+          isValidChallengeParticipant(incoming()) &&
+          incoming().uid == existing().uid &&
+          incoming().challengeId == existing().challengeId &&
+          incoming().joinedAt == existing().joinedAt &&
+          incoming().updatedAt == request.time && (
+            isAdmin() || (
+              isOwner(uid) &&
+              existing().status != 'completed' &&
+              incoming().diff(existing()).affectedKeys().hasOnly([
+                'currentDay', 'completedDays', 'streak',
+                'pointsEarned', 'coinsEarned', 'status', 'updatedAt'
+              ])
+            )
+          );
+      }
+    }
+
+    match /rewards/{rewardId} {
+      allow get: if isValidId(rewardId) && (existing().status == 'active' || isAdmin());
+      allow list: if resource.data.status == 'active' || isAdmin();
+      allow create: if isAdmin() &&
+        isValidId(rewardId) &&
+        isValidReward(incoming()) &&
+        incoming().id == rewardId &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+      allow update: if isAdmin() &&
+        isValidId(rewardId) &&
+        isValidReward(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time;
+      allow delete: if isAdmin() && isValidId(rewardId);
+    }
+
+    match /redemptions/{redemptionId} {
+      allow get: if isValidId(redemptionId) && (isOwner(existing().uid) || isAdmin());
+      allow list: if isSignedIn() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if isVerifiedUser() &&
+        isValidId(redemptionId) &&
+        isValidRedemption(incoming()) &&
+        incoming().id == redemptionId &&
+        incoming().uid == request.auth.uid &&
+        incoming().status == 'issued' &&
+        incoming().redeemedAt == request.time;
+      allow update: if isAdmin() &&
+        isValidId(redemptionId) &&
+        isValidRedemption(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().uid == existing().uid;
+    }
+
+    match /reports/{reportId} {
+      allow get: if isValidId(reportId) && (isOwner(existing().reporterId) || isAdmin());
+      allow list: if isSignedIn() && (resource.data.reporterId == request.auth.uid || isAdmin());
+      allow create: if isVerifiedUser() &&
+        isValidId(reportId) &&
+        isValidReport(incoming()) &&
+        incoming().id == reportId &&
+        incoming().reporterId == request.auth.uid &&
+        incoming().status == 'pending' &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+      allow update: if isAdmin() &&
+        isValidId(reportId) &&
+        isValidReport(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().reporterId == existing().reporterId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time;
+    }
+
+    match /communitySuggestions/{suggestionId} {
+      allow get: if isValidId(suggestionId) && (isOwner(existing().uid) || isAdmin());
+      allow list: if isSignedIn() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if isVerifiedUser() &&
+        isValidId(suggestionId) &&
+        isValidSuggestion(incoming()) &&
+        incoming().id == suggestionId &&
+        incoming().uid == request.auth.uid &&
+        incoming().status == 'pending' &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+      allow update: if isAdmin() &&
+        isValidId(suggestionId) &&
+        isValidSuggestion(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().uid == existing().uid &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time;
+    }
+
+    match /leaderApplications/{applicationId} {
+      allow get: if isValidId(applicationId) && (isOwner(existing().uid) || isAdmin());
+      allow list: if isSignedIn() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if isVerifiedUser() &&
+        isValidId(applicationId) &&
+        isValidLeaderApplication(incoming()) &&
+        incoming().id == applicationId &&
+        incoming().uid == request.auth.uid &&
+        incoming().status == 'pending' &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+      allow update: if isAdmin() &&
+        isValidId(applicationId) &&
+        isValidLeaderApplication(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().uid == existing().uid &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time;
+    }
+
+    match /events/{eventId} {
+      allow get: if isValidId(eventId) && (existing().status == 'upcoming' || isAdmin());
+      allow list: if resource.data.status == 'upcoming' || isAdmin();
+      allow create: if isAdmin() &&
+        isValidId(eventId) &&
+        isValidClubEvent(incoming()) &&
+        incoming().id == eventId &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+      allow update: if isVerifiedUser() &&
+        isValidId(eventId) &&
+        isValidClubEvent(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time && (
+          isAdmin() || (
+            incoming().diff(existing()).affectedKeys().hasOnly(['rsvpCount', 'updatedAt']) &&
+            incoming().rsvpCount >= existing().rsvpCount - 1 &&
+            incoming().rsvpCount <= existing().rsvpCount + 1
+          )
+        );
+      allow delete: if isAdmin() && isValidId(eventId);
+
+      match /rsvps/{uid} {
+        allow get: if isValidId(eventId) && isValidId(uid) && (isOwner(uid) || isAdmin());
+        allow list: if isValidId(eventId) && isSignedIn() && (resource.data.uid == request.auth.uid || isAdmin());
+        allow create: if isVerifiedUser() &&
+          isValidId(eventId) &&
+          isValidId(uid) &&
+          isOwner(uid) &&
+          isValidEventRsvp(incoming()) &&
+          incoming().uid == request.auth.uid &&
+          incoming().eventId == eventId &&
+          incoming().createdAt == request.time &&
+          exists(/databases/$(database)/documents/events/$(eventId));
+        allow delete: if isVerifiedUser() && isValidId(eventId) && isValidId(uid) && (isOwner(uid) || isAdmin());
+      }
+    }
+  }
+}

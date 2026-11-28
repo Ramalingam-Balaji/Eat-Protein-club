@@ -307,7 +307,7 @@
 //       <div
 //         className="
 //           mx-auto w-full max-w-[1450px] rounded-2xl
-//           bg-gradient-to-r from-[#f0faea] to-[#edf9e9]
+//           bg-gradient-to-r from-protein-soft to-protein-soft
 //           p-4 shadow-soft sm:p-6 lg:p-8
 //         "
 //       >
@@ -946,7 +946,7 @@ export default function BMISection({ showToast }) {
     const heightM = heightCm / 100;
     const bmi = weightKg / heightM ** 2;
 
-    let status = "";
+    let status;
 
     if (bmi < 16) {
       status = "Very severely underweight";
@@ -1019,8 +1019,8 @@ export default function BMISection({ showToast }) {
   const unitButtonClass = (selected) =>
     `flex-1 rounded-md py-1.5 text-xs font-bold transition ${
       selected
-        ? "bg-white text-[#006e2d] shadow-sm"
-        : "text-slate-500 hover:text-[#006e2d]"
+        ? "bg-white text-protein-green shadow-sm"
+        : "text-slate-500 hover:text-protein-green"
     }`;
 
   // Build the age dropdown options dynamically based on the selected profile
@@ -1035,13 +1035,13 @@ export default function BMISection({ showToast }) {
   id="protein-calculator"
   className="scroll-mt-0 bg-white px-3 py-8 sm:px-5 sm:py-12 lg:py-16"
 >
-      <div className="mx-auto w-full max-w-7xl rounded-2xl bg-gradient-to-r from-[#f0faea] to-[#edf9e9] p-4 shadow-lg shadow-green-900/5 sm:p-6 lg:p-8">
+      <div className="mx-auto w-full max-w-7xl rounded-2xl bg-gradient-to-r from-protein-soft to-protein-soft p-4 shadow-lg shadow-green-900/5 sm:p-6 lg:p-8">
         <div className="grid grid-cols-1 items-center gap-6 lg:grid-cols-[45%_50%] lg:gap-7">
           {/* LEFT CONTENT */}
           <div className="min-w-0">
             <SectionTag>Personalized Nutrition Insights</SectionTag>
 
-            <h2 className="mt-4 text-[27px] font-black leading-[1.08] tracking-tight text-[#123b25] sm:text-[31px]">
+            <h2 className="mt-4 text-[27px] font-black leading-[1.08] tracking-tight text-protein-dark sm:text-[31px]">
               Know Your Protein Need
               <br />
               &amp; BMI in Seconds
@@ -1055,7 +1055,7 @@ export default function BMISection({ showToast }) {
             <div className="mt-5 grid grid-cols-4 gap-1 sm:mt-6 sm:gap-2">
               {BENEFITS.map(({ Icon, title, subtitle }) => (
                 <div key={title} className="min-w-0 text-center">
-                  <div className="mx-auto grid h-9 w-9 place-items-center rounded-full bg-white text-[#006e2d] shadow-sm sm:h-11 sm:w-11">
+                  <div className="mx-auto grid h-9 w-9 place-items-center rounded-full bg-white text-protein-green shadow-sm sm:h-11 sm:w-11">
                     <Icon
                       size={19}
                       strokeWidth={1.8}
@@ -1097,8 +1097,8 @@ export default function BMISection({ showToast }) {
                     <span
                       className={`grid h-10 w-10 place-items-center rounded-xl border transition-all duration-200 sm:h-12 sm:w-12 ${
                         selected
-                          ? "border-[#006e2d] bg-[#006e2d] text-white shadow-md"
-                          : "border-slate-200 bg-white text-[#006e2d] hover:border-[#006e2d] hover:bg-green-50"
+                          ? "border-protein-green bg-protein-green text-white shadow-md"
+                          : "border-slate-200 bg-white text-protein-green hover:border-protein-green hover:bg-green-50"
                       }`}
                     >
                       <Icon size={25} strokeWidth={1.8} />
@@ -1106,7 +1106,7 @@ export default function BMISection({ showToast }) {
 
                     <span
                       className={`max-w-full text-center text-[9px] font-semibold leading-tight sm:text-[11px] ${
-                        selected ? "text-[#123b25]" : "text-slate-600"
+                        selected ? "text-protein-dark" : "text-slate-600"
                       }`}
                     >
                       {item}
@@ -1139,7 +1139,7 @@ export default function BMISection({ showToast }) {
                         aria-pressed={selected}
                         className={`flex items-center justify-center gap-2 rounded-xl border p-3 transition ${
                           selected
-                            ? "border-[#006e2d] bg-green-50 text-[#006e2d]"
+                            ? "border-protein-green bg-green-50 text-protein-green"
                             : "border-slate-200 text-slate-600 hover:border-green-300"
                         }`}
                       >
@@ -1352,13 +1352,13 @@ export default function BMISection({ showToast }) {
 
               {/* DAILY PROTEIN RESULT */}
               <div className="flex min-h-[130px] min-w-0 flex-col items-center justify-center rounded-xl border border-slate-100 bg-white p-2 text-center shadow-sm">
-                <Heart size={20} className="text-[#006e2d]" />
+                <Heart size={20} className="text-protein-green" />
 
                 <p className="mt-2 text-xs font-semibold text-slate-600">
                   Daily Protein
                 </p>
 
-                <p className="mt-2 text-2xl font-black text-[#006e2d]">
+                <p className="mt-2 text-2xl font-black text-protein-green">
                   {result.calculated ? `${result.protein}g` : "--"}
                 </p>
 
@@ -1372,7 +1372,7 @@ export default function BMISection({ showToast }) {
             <button
               type="button"
               onClick={handleCalculate}
-              className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#006e2d] text-sm font-bold text-white shadow-sm transition-all duration-200 hover:bg-[#005320] hover:shadow-md active:scale-[0.99]"
+              className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-protein-green text-sm font-bold text-white shadow-sm transition-all duration-200 hover:bg-protein-hover hover:shadow-md active:scale-[0.99]"
             >
               Calculate
               <ArrowRight size={17} />
@@ -1626,7 +1626,7 @@ export default function BMISection({ showToast }) {
 //       className="scroll-mt-24 bg-white px-3 py-5 sm:px-5 lg:px-6"
 //     >
 //       <div className="mx-auto max-w-[1440px]">
-//         <div className="grid grid-cols-1 gap-4 rounded-[28px] bg-[#F0F8EF] p-3 sm:p-5 lg:grid-cols-[0.95fr_1.6fr_0.65fr] lg:gap-5 lg:p-6">
+//         <div className="grid grid-cols-1 gap-4 rounded-[28px] bg-protein-soft p-3 sm:p-5 lg:grid-cols-[0.95fr_1.6fr_0.65fr] lg:gap-5 lg:p-6">
 //           {/* =================================================
 //               LEFT: INTRODUCTION
 //           ================================================= */}
@@ -1635,7 +1635,7 @@ export default function BMISection({ showToast }) {
 //               Protein Calculator
 //             </span>
 
-//             <h2 className="text-2xl font-black leading-tight tracking-tight text-[#103B27] sm:text-3xl xl:text-4xl">
+//             <h2 className="text-2xl font-black leading-tight tracking-tight text-protein-dark sm:text-3xl xl:text-4xl">
 //               Know Your Protein Need in 60 Seconds
 //             </h2>
 
@@ -1658,7 +1658,7 @@ export default function BMISection({ showToast }) {
 //                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm">
 //                       <Icon size={20} className="text-green-700" />
 //                     </div>
-//                     <p className="mt-1.5 max-w-[110px] text-xs font-semibold leading-tight text-[#103B27]">
+//                     <p className="mt-1.5 max-w-[110px] text-xs font-semibold leading-tight text-protein-dark">
 //                       {item.text}
 //                     </p>
 //                   </div>
@@ -1866,7 +1866,7 @@ export default function BMISection({ showToast }) {
 //                 </label>
 
 //                 <div className="flex h-[42px] items-center justify-between gap-1 rounded-xl border border-gray-200 bg-gray-50 px-2">
-//                   <span className="text-sm font-extrabold text-[#103B27]">
+//                   <span className="text-sm font-extrabold text-protein-dark">
 //                     {bmi > 0 ? bmi.toFixed(1) : "--"}
 //                   </span>
 
@@ -1998,11 +1998,11 @@ export default function BMISection({ showToast }) {
 //             {calculated && (
 //               <div className="mt-4 space-y-3">
 //                 <div className="grid grid-cols-2 gap-2">
-//                   <div className="rounded-2xl bg-[#EAF7E8] p-3 text-center">
+//                   <div className="rounded-2xl bg-protein-tint p-3 text-center">
 //                     <p className="text-xs font-bold text-green-800">
 //                       Daily Protein Need
 //                     </p>
-//                     <p className="mt-1 text-2xl font-black text-[#103B27]">
+//                     <p className="mt-1 text-2xl font-black text-protein-dark">
 //                       {proteinNeed} g
 //                     </p>
 //                     <p className="text-[11px] text-gray-600">per day</p>
@@ -2022,7 +2022,7 @@ export default function BMISection({ showToast }) {
 //                 </div>
 
 //                 <div className="rounded-2xl bg-green-50 p-3">
-//                   <h3 className="flex items-center gap-2 text-sm font-extrabold text-[#103B27]">
+//                   <h3 className="flex items-center gap-2 text-sm font-extrabold text-protein-dark">
 //                     <CheckCircle2 size={18} className="text-green-700" />
 //                     Your Personalized Recommendation
 //                   </h3>
@@ -2052,7 +2052,7 @@ export default function BMISection({ showToast }) {
 //               <Users size={34} className="text-green-700" />
 //             </div>
 
-//             <h3 className="mt-3 text-lg font-extrabold leading-tight text-[#103B27] sm:text-xl">
+//             <h3 className="mt-3 text-lg font-extrabold leading-tight text-protein-dark sm:text-xl">
 //               Join people on the same journey.
 //             </h3>
 
@@ -2119,7 +2119,7 @@ export default function BMISection({ showToast }) {
 //         ================================================= */}
 //         <div className="mt-4 rounded-3xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
 //           <div className="flex flex-wrap items-center justify-between gap-2">
-//             <h3 className="flex items-center gap-2 text-lg font-extrabold text-[#103B27] sm:text-xl">
+//             <h3 className="flex items-center gap-2 text-lg font-extrabold text-protein-dark sm:text-xl">
 //               <Users className="text-green-700" size={23} />
 //               Family Profiles
 //             </h3>

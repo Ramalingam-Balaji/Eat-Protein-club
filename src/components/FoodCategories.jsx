@@ -1,7 +1,6 @@
-import { ArrowRight } from "lucide-react";
 import { CATEGORIES } from "../data/homeData";
 import SectionTag from "./SectionTag";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function FoodCategories() {
   const navigate = useNavigate();
@@ -11,7 +10,6 @@ export default function FoodCategories() {
       <div className="mx-auto max-w-[1400px]">
         {/* Responsive Section Heading */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-5">
-          {/* Heading and Description */}
           <div className="min-w-0 flex-1">
             <SectionTag>Discover & Choose</SectionTag>
 
@@ -19,25 +17,12 @@ export default function FoodCategories() {
               High Protein Foods from Local Stores
             </h2>
 
-            <p className="mt-1 max-w-[700px] text-sm leading-relaxed text-slate-600">
+            <p className="mt-1 max-w-[700px] text-sm leading-relaxed text-protein-muted">
               Explore a wide range of protein-rich foods available in stores
               near you. Each product comes with nutrition intelligence to help
               you make the right choice.
             </p>
           </div>
-
-          {/* Explore All Items Link */}
-          {/* <div className="flex justify-end sm:shrink-0">
-            <Link
-              to="/food-stores"
-              className="inline-flex items-center gap-2 py-2 font-bold text-green-800 transition-colors duration-200 hover:text-green-500"
-            >
-              <span className="whitespace-nowrap">
-                Explore All Items
-              </span>
-              <ArrowRight size={18} />
-            </Link>
-          </div> */}
         </div>
 
         {/* Food Category Cards */}
@@ -46,12 +31,12 @@ export default function FoodCategories() {
             <button
               type="button"
               key={category.title}
-              // onClick={() => navigate("/food-stores")}
+              onClick={() => navigate("")}
               aria-label={`Explore ${category.title}`}
-              className="group overflow-hidden rounded-xl border border-slate-100 bg-white shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="group overflow-hidden rounded-xl border border-protein-border/80 bg-white shadow-card transition duration-200 hover:-translate-y-1 hover:border-protein-green/50 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-protein-green"
             >
               {/* Category Image */}
-              <div className="h-[110px] overflow-hidden bg-slate-50">
+              <div className="h-[110px] overflow-hidden bg-protein-surface">
                 <img
                   src={category.image}
                   alt={category.title}
@@ -62,7 +47,7 @@ export default function FoodCategories() {
 
               {/* Category Title */}
               <div className="flex min-h-[50px] items-center justify-center p-2 text-center">
-                <span className="text-[12px] font-bold leading-3 text-slate-800">
+                <span className="text-[12px] font-bold leading-3 text-protein-dark">
                   {category.title}
                 </span>
               </div>

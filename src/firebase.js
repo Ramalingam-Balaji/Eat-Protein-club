@@ -1,101 +1,61 @@
-// // Import the functions you need from the SDKs you need
-// import { initializeApp } from "firebase/app";
-// import { getAnalytics } from "firebase/analytics";
-// import { getAuth } from "firebase/auth";
-// import { getFirestore } from "firebase/firestore";
-// // TODO: Add SDKs for Firebase products that you want to use
-// // https://firebase.google.com/docs/web/setup#available-libraries
-
-// // Your web app's Firebase configuration
-// // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-// const firebaseConfig = {
-//   apiKey: "AIzaSyD-Q9YJudlLUhyQW12d6KlOHckBmJlcCTQ",
-//   authDomain: "eat-protein-9a46c.firebaseapp.com",
-//   projectId: "eat-protein-9a46c",
-//   storageBucket: "eat-protein-9a46c.firebasestorage.app",
-//   messagingSenderId: "220970432448",
-//   appId: "1:220970432448:web:8f0c4ad15449c09ed67a25",
-//   measurementId: "G-RLRXLL8S2G"
-// };
-
-// // Initialize Firebase
-// const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
-// export const auth = getAuth(app);
-// export const db = getFirestore(app);
-
-
-
-// // Import the functions you need from the SDKs you need
-// import { initializeApp } from "firebase/app";
-// // TODO: Add SDKs for Firebase products that you want to use
-// // https://firebase.google.com/docs/web/setup#available-libraries
-
-// // Your web app's Firebase configuration
-// const firebaseConfig = {
-//   apiKey: "AIzaSyDNAVIY9c_DcmxhBS2d6l_NTYwYKX2R7CI",
-//   authDomain: "protein-1064f.firebaseapp.com",
-//   projectId: "protein-1064f",
-//   storageBucket: "protein-1064f.firebasestorage.app",
-//   messagingSenderId: "912276945928",
-//   appId: "1:912276945928:web:2adbfc0fb60920eb64a5bd"
-// };
-
-// // Initialize Firebase
-// const app = initializeApp(firebaseConfig);
-
-
-// src/firebase.js
-
-// import { initializeApp } from "firebase/app";
-// import { getAuth } from "firebase/auth";
-// import { getFirestore } from "firebase/firestore";
-
-// const firebaseConfig = {
-//   apiKey: "AIzaSyDNAVIY9c_DcmxhBS2d6l_NTYwYKX2R7CI",
-//   authDomain: "protein-1064f.firebaseapp.com",
-//   projectId: "protein-1064f",
-//   storageBucket: "protein-1064f.firebasestorage.app",
-//   messagingSenderId: "912276945928",
-//   appId: "1:912276945928:web:2adbfc0fb60920eb64a5bd",
-// };
-
-// const app = initializeApp(firebaseConfig);
-
-// export const auth = getAuth(app);
-// export const db = getFirestore(app);
-
-// export default app;
-
-
-
-// src/firebase.js
-
 import { initializeApp } from "firebase/app";
-import {
-  getAuth,
-  RecaptchaVerifier,
-} from "firebase/auth";
-import {
-  getFirestore,
-} from "firebase/firestore";
-import {
-  getStorage,
-} from "firebase/storage";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { doc, getDocFromServer, getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+import firebaseConfig from "../firebase-applet-config.json";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDNAVIY9c_DcmxhBS2d6l_NTYwYKX2R7CI",
-  authDomain: "protein-1064f.firebaseapp.com",
-  projectId: "protein-1064f",
-  storageBucket: "protein-1064f.firebasestorage.app",
-  messagingSenderId: "912276945928",
-  appId: "1:912276945928:web:2adbfc0fb60920eb64a5bd",
+export const OperationType = {
+  CREATE: "create",
+  UPDATE: "update",
+  DELETE: "delete",
+  LIST: "list",
+  GET: "get",
+  WRITE: "write",
 };
 
 const app = initializeApp(firebaseConfig);
-
+export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 export const auth = getAuth(app);
-export const db = getFirestore(app);
 export const storage = getStorage(app);
+export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: "select_account" });
 
+export function handleFirestoreError(error, operationType, path) {
+  const errInfo = {
+    error: error instanceof Error ? error.message : String(error),
+    authInfo: {
+      userId: auth.currentUser?.uid ?? null,
+      email: auth.currentUser?.email ?? null,
+      emailVerified: auth.currentUser?.emailVerified ?? null,
+      isAnonymous: auth.currentUser?.isAnonymous ?? null,
+      tenantId: auth.currentUser?.tenantId ?? null,
+      providerInfo:
+        auth.currentUser?.providerData?.map((provider) => ({
+          providerId: provider.providerId,
+          email: provider.email,
+        })) || [],
+    },
+    operationType,
+    path,
+  };
+  console.error("Firestore Error: ", JSON.stringify(errInfo));
+  throw new Error(JSON.stringify(errInfo));
+}
+
+async function testConnection() {
+  try {
+    await getDocFromServer(doc(db, "test", "connection"));
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message.includes("the client is offline")
+    ) {
+      console.error("Please check your Firebase configuration.");
+    }
+  }
+}
+
+testConnection();
+
+export { app };
 export default app;
