@@ -10,6 +10,8 @@ import CommunityDetails from "./pages/ProteinClub/CommunityDetails";
 import SuggestCommunity from "./pages/ProteinClub/SuggestCommunity";
 import LeaderboardRewards from "./pages/ProteinClub/LeaderboardRewards";
 import ProteinChallenge from "./pages/ProteinClub/ProteinChallenge";
+import MyProteinClub from "./pages/ProteinClub/MyProteinClub";
+import ProteinClubAuth from "./pages/ProteinClub/ProteinClubAuth";
 
 import Franchise from "./pages/Franchise";
 import FoodStores from "./pages/FoodStores";
@@ -27,6 +29,11 @@ import ScrollManager from "./components/ScrollManager";
 //import ScrollToTop from "./components/ScrollToTop";
 import WhatsAppSupport from "./components/WhatsAppSupport";
 
+
+import ProteinClubDashboard from "./pages/ProteinClub/ProteinClubDashboard";
+import ProtectedRoute from "./components/ProteinClub/ProtectedRoute";
+
+
 import ProteinCalculator from "./pages/ProteinCalculator";
 
 export default function AppRoutes() {
@@ -38,11 +45,23 @@ export default function AppRoutes() {
 
       <main className="w-full min-w-0 flex-1">
         <Routes>
+
+
+<Route
+  path="/protein-club/dashboard"
+  element={
+    <ProtectedRoute>
+      <ProteinClubDashboard />
+    </ProtectedRoute>
+  }
+/>
+
+
           <Route path="/" element={<Home />} />
 
           <Route path="/protein-club" element={<ProteinClub />} />
           <Route
-  path="/protein-club/communities"
+  path="/protein-club/explore-communities"
   element={<ExploreCommunities />}
 />
 <Route
@@ -64,6 +83,15 @@ export default function AppRoutes() {
 <Route
   path="/protein-club/21-day-protein-challenge"
   element={<ProteinChallenge />}
+/>
+<Route
+  path="/protein-club/my-club"
+  element={<MyProteinClub />}
+/>
+
+          <Route
+  path="/protein-club/register"
+  element={<ProteinClubAuth />}
 />
 
         

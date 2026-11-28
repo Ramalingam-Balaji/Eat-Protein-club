@@ -9,6 +9,7 @@ import AppPromo from "../components/AppPromo";
 import HowItWorks from "../components/HowItWorks";
 import FranchiseSection from "../components/FranchiseSection";
 import ProteinClubBottomSections from "../components/ProteinClubBottomSections";
+import { HowProteinClubWorks } from "../components/HowProteinClubWorks";
 import ProteinPacks from "../components/ProteinPacks";
 //import About from "../components/About";
 //import Refer from "../components/Refer";
@@ -65,6 +66,8 @@ export default function Home() {
         <section id="protein-club" className="scroll-mt-24">
           <ProteinClub />
         </section>
+
+        <HowProteinClubWorks />
 
         <section id="protein-calculator" className="scroll-mt-24">
           <ProteinCalculator />

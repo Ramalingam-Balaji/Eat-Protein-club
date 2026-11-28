@@ -730,7 +730,7 @@ function ProteinChallenge() {
               </div>
 
               <Link
-                to="/protein-club/community/21-day-protein-challenge"
+                to="/protein-club/communities"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-green-700 px-3 py-2.5 text-sm font-bold text-green-800 transition hover:bg-green-50"
               >
                 <Users size={17} />
